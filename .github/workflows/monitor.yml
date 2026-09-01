@@ -1,0 +1,26 @@
+name: StormPolicy Monitor
+
+# Runs the autonomous corroboration-and-trigger sweep on a schedule. Free
+# and unlimited for public repos, no server to keep alive, no spin-down --
+# a scheduled job that runs and exits, not a process waiting for traffic.
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch: {} # manual "Run workflow" button for on-demand checks
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - name: Check all active policies against live Telegraph signals
+        env:
+          TEST_WALLET_PRIVATE_KEY: ${{ secrets.TEST_WALLET_PRIVATE_KEY }}
+        run: node -e "import('./src/monitor.mjs').then(m => m.checkAllPolicies())"
