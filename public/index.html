@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>StormPolicy &mdash; Verified Parametric Storm Insurance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.17.0/dist/ethers.umd.min.js"></script>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <div class="brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7v6c0 5.25 3.75 9.75 9 11 5.25-1.25 9-5.75 9-11V7l-9-5z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="0" y1="0" x2="24" y2="24"><stop stop-color="#34D399"/><stop offset="1" stop-color="#059669"/></linearGradient></defs></svg>
+      <span>StormPolicy</span>
+      <span class="live-dot" title="Live on Base Sepolia"></span>
+    </div>
+    <div class="nav-links">
+      <a id="nav-contract" href="#" target="_blank">Contract</a>
+      <a href="#preview">Live Risk</a>
+      <a href="#policies">Policies</a>
+      <button id="connect-btn" class="btn btn-outline btn-sm">Connect Wallet</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">Built on Telegraph Protocol &middot; Track 3</div>
+    <h1>Parametric storm insurance,<br/>verified on&#8209;chain.</h1>
+    <p class="hero-sub">
+      StormPolicy cross-corroborates two independent, live Telegraph signals &mdash;
+      real weather forecasts and real storm alerts &mdash; and releases a bounded
+      on-chain payout automatically the moment verified conditions cross a
+      calibrated threshold. No claims process. No human in the loop.
+    </p>
+    <div class="hero-cta">
+      <a href="#preview" class="btn btn-primary">Preview Live Risk</a>
+      <a href="#policies" class="btn btn-ghost">View Policies</a>
+    </div>
+    <div class="hero-stats" id="hero-stats">
+      <div class="stat"><span class="stat-num" id="stat-policies" data-count="0">0</span><span class="stat-label">Policies</span></div>
+      <div class="stat"><span class="stat-num" id="stat-triggered" data-count="0">0</span><span class="stat-label">Triggered</span></div>
+      <div class="stat"><span class="stat-num" data-count="2">0</span><span class="stat-label">Signals per decision</span></div>
+      <div class="stat"><span class="stat-num" data-count="100" data-suffix="%">0</span><span class="stat-label">Evidence on-chain</span></div>
+    </div>
+  </div>
+  <div class="hero-glow"></div>
+</header>
+
+<main>
+
+  <section id="preview" class="panel reveal">
+    <div class="panel-head">
+      <h2>Preview live risk</h2>
+      <p class="panel-desc">Calls real Telegraph miners, paid on-chain via x402, and shows exactly what the decision engine would do &mdash; nothing here touches the contract.</p>
+    </div>
+    <div class="panel-body">
+      <div class="field-row">
+        <div class="field grow">
+          <label for="assess-location">Location</label>
+          <input id="assess-location" placeholder="e.g. Manila, Philippines" />
+        </div>
+        <div class="field field-btn">
+          <button class="btn btn-primary" id="assess-btn">Assess</button>
+        </div>
+      </div>
+      <div class="status-line" id="assess-status"></div>
+      <pre id="assess-out" class="output" hidden></pre>
+    </div>
+  </section>
+
+  <section id="create" class="panel reveal">
+    <div class="panel-head">
+      <h2>Create a policy</h2>
+      <p class="panel-desc">Fund and register a policy directly from your own wallet. The payout releases automatically once corroboration clears for this location &mdash; you never call it manually.</p>
+    </div>
+    <div class="panel-body">
+      <div class="status-line" id="wallet-status">Not connected.</div>
+      <div class="field-row">
+        <div class="field grow">
+          <label for="cp-beneficiary">Beneficiary address</label>
+          <input id="cp-beneficiary" placeholder="0x..." />
+        </div>
+        <div class="field">
+          <label for="cp-payout">Payout (ETH)</label>
+          <input id="cp-payout" placeholder="0.0001" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="cp-location">Location</label>
+        <input id="cp-location" placeholder="e.g. Manila, Philippines" />
+      </div>
+      <button class="btn btn-primary" id="create-btn" disabled>Create Policy</button>
+      <div class="status-line" id="create-status"></div>
+    </div>
+  </section>
+
+  <section id="policies" class="panel reveal">
+    <div class="panel-head">
+      <h2>Policies</h2>
+      <p class="panel-desc">Read live from the contract. &ldquo;Check Now&rdquo; runs the same corroboration check the persistent monitor runs on a schedule.</p>
+    </div>
+    <div class="panel-body">
+      <div id="empty" class="empty" hidden>No policies yet &mdash; create the first one above.</div>
+      <div class="cards" id="policy-cards"></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>StormPolicy &middot; Base Sepolia &middot; <a id="footer-contract" href="#" target="_blank">Contract</a></span>
+    <span class="footer-muted">Built for the Telegraph Protocol Hackathon, Track 3</span>
+  </div>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+{
+  "name": "stormpolicy",
+  "version": "1.0.0",
+  "description": "Telegraph Track 3: a parametric storm-insurance protocol that cross-corroborates real, live WEATHER_FORECAST and STORM_ALERT signals from Telegraph, applies a confidence-calibrated entity-bound threshold, and autonomously triggers a bounded on-chain payout -- exposed both as standalone scripts and as MCP tools any agent can call.",
+  "main": "mcp/server.mjs",
+  "scripts": {
+    "compile": "node compile.mjs",
+    "deploy": "node deploy.mjs",
+    "test:contract": "node test-contract.mjs",
+    "test:telegraph": "node test-telegraph-client.mjs",
+    "demo": "node demo-e2e.mjs",
+    "sweep": "node -e \"import('./src/monitor.mjs').then(m => m.checkAllPolicies())\"",
+    "mcp": "node mcp/server.mjs",
+    "test:mcp": "node test-mcp-server.mjs"
+  },
+  "keywords": [
+    "telegraph-protocol",
+    "mcp",
+    "x402",
+    "parametric-insurance",
+    "on-chain-agent"
+  ],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "@x402/core": "^2.24.0",
+    "@x402/evm": "^2.24.0",
+    "@x402/fetch": "^2.24.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "ethers": "^6.17.0",
+    "express": "^5.2.1",
+    "solc": "^0.8.36",
+    "viem": "^2.56.1",
+    "zod": "^4.5.4"
+  }
+}
