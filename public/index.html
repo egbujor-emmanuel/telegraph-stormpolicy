@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/ethers@6.17.0/dist/ethers.umd.min.js"></script>
-<link rel="stylesheet" href="/style.css" />
+<link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
@@ -21,7 +21,7 @@
     </div>
     <div class="nav-links">
       <a id="nav-contract" href="#" target="_blank">Contract</a>
-      <a href="#preview">Live Risk</a>
+      <a href="#mechanism">How it works</a>
       <a href="#policies">Policies</a>
       <button id="connect-btn" class="btn btn-outline btn-sm">Connect Wallet</button>
     </div>
@@ -39,7 +39,7 @@
       calibrated threshold. No claims process. No human in the loop.
     </p>
     <div class="hero-cta">
-      <a href="#preview" class="btn btn-primary">Preview Live Risk</a>
+      <a href="#mechanism" class="btn btn-primary">How it works</a>
       <a href="#policies" class="btn btn-ghost">View Policies</a>
     </div>
     <div class="hero-stats" id="hero-stats">
@@ -54,23 +54,26 @@
 
 <main>
 
-  <section id="preview" class="panel reveal">
+  <section id="mechanism" class="panel reveal">
     <div class="panel-head">
-      <h2>Preview live risk</h2>
-      <p class="panel-desc">Calls real Telegraph miners, paid on-chain via x402, and shows exactly what the decision engine would do &mdash; nothing here touches the contract.</p>
+      <h2>How it decides</h2>
+      <p class="panel-desc">A persistent agent calls two independent, real Telegraph signals for each policy's location &mdash; a weather forecast and a storm alert &mdash; paid on-chain via x402. It only triggers when both corroborate, both clear a calibrated confidence threshold, and both agree on the same location.</p>
     </div>
     <div class="panel-body">
-      <div class="field-row">
-        <div class="field grow">
-          <label for="assess-location">Location</label>
-          <input id="assess-location" placeholder="e.g. Manila, Philippines" />
-        </div>
-        <div class="field field-btn">
-          <button class="btn btn-primary" id="assess-btn">Assess</button>
-        </div>
+      <div class="mech-grid">
+        <div class="mech-item"><span class="mech-label">Min. forecast confidence</span><span class="mech-value">0.50</span></div>
+        <div class="mech-item"><span class="mech-label">Precipitation probability</span><span class="mech-value">&ge; 70%</span></div>
+        <div class="mech-item"><span class="mech-label">Wind gust threshold</span><span class="mech-value">&ge; 50 km/h</span></div>
+        <div class="mech-item"><span class="mech-label">Combined risk threshold</span><span class="mech-value">0.60</span></div>
       </div>
-      <div class="status-line" id="assess-status"></div>
-      <pre id="assess-out" class="output" hidden></pre>
+      <div class="mech-example">
+        <div class="mech-example-head">Real trigger &mdash; Policy #1, Manila, Philippines</div>
+        <pre class="output">corroborated: forecast confidence 1.00 (precip 100%, gust 56.3km/h) + alert risk 0.82 (high) both cross threshold for Manila, Philippines
+
+forecast confidence: 100%   alert confidence: 82%
+tx: 0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de</pre>
+        <a href="https://sepolia.basescan.org/tx/0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de" target="_blank" class="mech-link">View this transaction on Basescan &rarr;</a>
+      </div>
     </div>
   </section>
 
@@ -103,7 +106,7 @@
   <section id="policies" class="panel reveal">
     <div class="panel-head">
       <h2>Policies</h2>
-      <p class="panel-desc">Read live from the contract. &ldquo;Check Now&rdquo; runs the same corroboration check the persistent monitor runs on a schedule.</p>
+      <p class="panel-desc">Read live from the contract. A scheduled agent checks every active policy against live signals every 15 minutes and triggers automatically &mdash; no manual step.</p>
     </div>
     <div class="panel-body">
       <div id="empty" class="empty" hidden>No policies yet &mdash; create the first one above.</div>
@@ -120,6 +123,6 @@
   </div>
 </footer>
 
-<script src="/app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

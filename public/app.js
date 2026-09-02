@@ -1,12 +1,32 @@
 const CONTRACT_ADDRESS = '0xFDB301bB77e82B5CB75D9768C79B4d3Af2D19424';
 const CHAIN_ID_HEX = '0x14a34'; // 84532 Base Sepolia
+const CHAIN_ID = 84532;
+const RPC_URL = 'https://base-sepolia-rpc.publicnode.com';
+const DEPLOY_BLOCK = 46260266;
 const EXPLORER = 'https://sepolia.basescan.org';
 
 const ABI = [
   'function createPolicy(address beneficiary, string location) payable returns (uint256)',
   'function getPolicy(uint256) view returns (tuple(address funder, address beneficiary, string location, uint256 payoutAmount, bool active, bool triggered, uint256 createdAt))',
   'function nextPolicyId() view returns (uint256)',
+  'event PolicyTriggered(uint256 indexed policyId, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason, uint256 payoutAmount)',
 ];
+
+// Everything below reads directly from the chain via a public RPC -- this
+// page has no backend. The agent's key that trusts triggerPayout() lives
+// only in the GitHub Actions monitor, never here.
+const readProvider = new ethers.JsonRpcProvider(RPC_URL, CHAIN_ID, { staticNetwork: true });
+const readContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, readProvider);
+
+// eth_getLogs on this RPC caps ranges at 50,000 blocks, so page through it.
+async function queryFilterChunked(filter, fromBlock, toBlock, chunkSize = 45000) {
+  const logs = [];
+  for (let start = fromBlock; start <= toBlock; start += chunkSize) {
+    const end = Math.min(start + chunkSize - 1, toBlock);
+    logs.push(...await readContract.queryFilter(filter, start, end));
+  }
+  return logs;
+}
 
 for (const id of ['nav-contract', 'footer-contract']) {
   const el = document.getElementById(id);
@@ -89,35 +109,6 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
   }
 });
 
-// ── Assess (read-only, live) ────────────────────────────────────────────
-document.getElementById('assess-btn').addEventListener('click', async () => {
-  const btn = document.getElementById('assess-btn');
-  const location = document.getElementById('assess-location').value.trim();
-  const statusEl = document.getElementById('assess-status');
-  const outEl = document.getElementById('assess-out');
-  if (!location) { statusEl.textContent = 'Enter a location.'; statusEl.className = 'status-line err'; return; }
-  btn.disabled = true;
-  statusEl.textContent = 'Calling live Telegraph signals, paid via x402';
-  statusEl.className = 'status-line loading';
-  outEl.hidden = true;
-  try {
-    const res = await fetch('/api/assess', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'assess failed');
-    statusEl.textContent = data.shouldTrigger ? 'Decision: would TRIGGER' : 'Decision: would HOLD';
-    statusEl.className = 'status-line ' + (data.shouldTrigger ? 'ok' : '');
-    outEl.textContent = JSON.stringify(data, null, 2);
-    outEl.hidden = false;
-  } catch (err) {
-    statusEl.textContent = 'Error: ' + err.message;
-    statusEl.className = 'status-line err';
-  } finally {
-    btn.disabled = false;
-  }
-});
-
 // ── Create policy (direct on-chain, user's own wallet) ──────────────────
 document.getElementById('create-btn').addEventListener('click', async () => {
   const statusEl = document.getElementById('create-status');
@@ -151,49 +142,41 @@ function statusBadge(p) {
   return '<span class="badge cancelled">Cancelled</span>';
 }
 
-async function checkPolicy(id, btn) {
-  btn.disabled = true;
-  const original = btn.textContent;
-  btn.textContent = 'Checking...';
-  try {
-    const res = await fetch(`/api/check/${id}`, { method: 'POST' });
-    const data = await res.json();
-    if (data.triggered) {
-      alert(`Policy ${id} triggered.\ntx: ${data.txHash}\n\n${data.reason}`);
-    } else {
-      alert(`Policy ${id}: holding.\n\n${data.reason}`);
-    }
-    loadPolicies();
-  } catch (err) {
-    alert('Error: ' + err.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = original;
-  }
-}
-
 async function showEvidence(id) {
-  const res = await fetch(`/api/policy/${id}/evidence`);
-  const data = await res.json();
-  if (!data.triggered) { alert('No evidence yet -- not triggered.'); return; }
+  const logs = await queryFilterChunked(readContract.filters.PolicyTriggered(id), DEPLOY_BLOCK, await readProvider.getBlockNumber());
+  if (logs.length === 0) { alert('No evidence yet -- not triggered.'); return; }
+  const log = logs[0];
+  const a = log.args;
   alert(
     `Policy ${id} evidence\n\n` +
-    `tx: ${data.txHash}\nblock: ${data.blockNumber}\n\n` +
-    `forecast confidence: ${data.forecastConfidencePct}%\n` +
-    `alert confidence: ${data.alertConfidencePct}%\n\n` +
-    `forecast signal hash: ${data.forecastSignalHash}\n` +
-    `alert signal hash: ${data.alertSignalHash}\n\n` +
-    `reason: ${data.reason}\n\n` +
-    `View on explorer: ${EXPLORER}/tx/${data.txHash}`
+    `tx: ${log.transactionHash}\nblock: ${log.blockNumber}\n\n` +
+    `forecast confidence: ${Number(a.forecastConfidenceBps) / 100}%\n` +
+    `alert confidence: ${Number(a.alertConfidenceBps) / 100}%\n\n` +
+    `forecast signal hash: ${a.forecastSignalHash}\n` +
+    `alert signal hash: ${a.alertSignalHash}\n\n` +
+    `reason: ${a.reason}\n\n` +
+    `View on explorer: ${EXPLORER}/tx/${log.transactionHash}`
   );
 }
 
 async function loadPolicies() {
-  const res = await fetch('/api/policies');
-  const data = await res.json();
   const container = document.getElementById('policy-cards');
   const empty = document.getElementById('empty');
-  const policies = data.policies || [];
+
+  const next = Number(await readContract.nextPolicyId());
+  const policies = await Promise.all(
+    Array.from({ length: next }, (_, id) => id).map(async (id) => {
+      const p = await readContract.getPolicy(id);
+      return {
+        id,
+        beneficiary: p.beneficiary,
+        location: p.location,
+        payoutEth: ethers.formatEther(p.payoutAmount),
+        active: p.active,
+        triggered: p.triggered,
+      };
+    })
+  );
 
   animateCount(document.getElementById('stat-policies'), policies.length);
   animateCount(document.getElementById('stat-triggered'), policies.filter(p => p.triggered).length);
@@ -205,11 +188,9 @@ async function loadPolicies() {
   }
   empty.hidden = true;
   container.innerHTML = policies.map(p => {
-    const action = p.active
-      ? `<button class="btn btn-outline btn-sm" onclick="checkPolicy('${p.id}', this)">Check Now</button>`
-      : p.triggered
-        ? `<button class="btn btn-ghost btn-sm" onclick="showEvidence('${p.id}')">Evidence</button>`
-        : '';
+    const action = p.triggered
+      ? `<button class="btn btn-ghost btn-sm" onclick="showEvidence('${p.id}')">Evidence</button>`
+      : '';
     return `
       <div class="policy-card">
         <div class="policy-main">
@@ -225,7 +206,6 @@ async function loadPolicies() {
   }).join('');
 }
 
-window.checkPolicy = checkPolicy;
 window.showEvidence = showEvidence;
 
 loadPolicies();
