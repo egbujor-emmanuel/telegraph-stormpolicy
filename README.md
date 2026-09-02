@@ -66,6 +66,8 @@ npm run test:mcp       # smoke-tests the MCP server's tools
 
 Requires `TEST_WALLET_PRIVATE_KEY` (funded with Base Sepolia ETH for gas and USDC for x402 payments) available via the same `.env` convention used elsewhere in this project.
 
+`server/index.mjs` (an Express API with an agent-key-gated "assess"/"check now" surface) is kept as a local dev/testing convenience — the deployed site at the link above no longer depends on it; it reads the contract directly, and the real trigger loop is the scheduled GitHub Actions job, not this server.
+
 ## What's deliberately not here
 
 A bond/slashing mechanism, where the agent would stake funds against being wrong and lose them if a trigger is later shown incorrect, was considered and left out. It's the more sophisticated design, but building a dispute window and slashing logic solidly in the time available risked breaking something in a live demo. Documented here as a natural next step rather than shipped half-working.
