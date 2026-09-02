@@ -2,7 +2,7 @@
 
 A parametric storm-insurance protocol built on Telegraph Protocol for the Track 3 (Applications) hackathon track. It cross-corroborates two real, live Telegraph intents, applies a confidence-calibrated and location-bound threshold, and autonomously executes a bounded on-chain payout — with no human in the loop and the full evidence trail stored on-chain.
 
-**Live:** [egbujor-emmanuel.github.io/telegraph-stormpolicy](https://egbujor-emmanuel.github.io/telegraph-stormpolicy/) — a static site that reads policies straight off Base Sepolia in the browser. Behind it, a [GitHub Actions job](.github/workflows/monitor.yml) checks every active policy against live Telegraph signals every 15 minutes and triggers payouts autonomously — free and unlimited on a public repo, with no server to keep alive and no spin-down risk.
+**Live:** [egbujor-emmanuel.github.io/telegraph-stormpolicy](https://egbujor-emmanuel.github.io/telegraph-stormpolicy/) — a static site that reads policies straight off Base Sepolia in the browser. Behind it, a [GitHub Actions job](.github/workflows/monitor.yml) is scheduled every 15 minutes to check every active policy against live Telegraph signals and trigger payouts autonomously — free and unlimited on a public repo, with no server to keep alive and no spin-down risk. In practice GitHub's cron scheduler is best-effort, not to-the-minute: observed cadence on this repo has been every 2–5 hours rather than every 15 minutes. The job itself is correct and does trigger real payouts when it runs (verified: [`f94f0cb`](https://sepolia.basescan.org/tx/0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de)) — the gap is GitHub's scheduler, not the logic.
 
 ## Why this, specifically
 
