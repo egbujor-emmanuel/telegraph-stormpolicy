@@ -2,6 +2,8 @@
 
 A parametric storm-insurance protocol built on Telegraph Protocol for the Track 3 (Applications) hackathon track. It cross-corroborates two real, live Telegraph intents, applies a confidence-calibrated and location-bound threshold, and autonomously executes a bounded on-chain payout — with no human in the loop and the full evidence trail stored on-chain.
 
+**Live:** [egbujor-emmanuel.github.io/telegraph-stormpolicy](https://egbujor-emmanuel.github.io/telegraph-stormpolicy/) — a static site that reads policies straight off Base Sepolia in the browser. Behind it, a [GitHub Actions job](.github/workflows/monitor.yml) checks every active policy against live Telegraph signals every 15 minutes and triggers payouts autonomously — free and unlimited on a public repo, with no server to keep alive and no spin-down risk.
+
 ## Why this, specifically
 
 Telegraph's own hackathon rules name "verified intelligence directly triggering on-chain actions — trading, liquidations, arbitrage, compliance checks, treasury management" as one of the highest-value areas for Track 3. A survey of all six existing official Telegraph use-cases (AdGuard, ReviewRadar, ScholarGuard, TrustFilter, TruthWire, SuperSignal) found that every one of them lives in AI-content-detection, and none of them has a smart contract autonomously executing a decision — the closest, SuperSignal, still stores its decision off-chain. Financial & On-Chain and Weather & Sports, the two intent categories StormPolicy uses, are untouched by any existing example. This targets that gap directly.
@@ -25,6 +27,20 @@ The same pipeline is exposed as an MCP server (`mcp/server.mjs`) so any MCP-spea
 | `assess_storm_risk` | Read-only preview of the corroboration decision for a location |
 | `check_policy` | Assess and, if warranted, trigger one policy by ID |
 | `sweep_all_policies` | Check every active policy — the persistent-monitoring entry point |
+
+Verified against the real MCP protocol with `npm run test:mcp`, which spawns the server over stdio with the official SDK's `Client`/`StdioClientTransport` (the same transport any MCP host uses) and calls a live tool — this is the run that first caught the Jakarta/"South China Sea" entity-binding mismatch, unscripted. To point Claude Desktop at it, add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "stormpolicy": {
+      "command": "node",
+      "args": ["/absolute/path/to/telegraph-stormpolicy/mcp/server.mjs"],
+      "env": { "TEST_WALLET_PRIVATE_KEY": "0x..." }
+    }
+  }
+}
+```
 
 ## Verified live run
 
