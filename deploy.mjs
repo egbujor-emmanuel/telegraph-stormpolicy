@@ -1,4 +1,5 @@
-import 'dotenv/config';
+import { config } from 'dotenv';
+config({ quiet: true });
 import fs from 'node:fs';
 import { ethers } from 'ethers';
 

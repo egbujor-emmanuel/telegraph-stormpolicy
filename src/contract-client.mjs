@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { ethers } from 'ethers';
-import 'dotenv/config';
+import { config } from 'dotenv';
+config({ quiet: true });
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
