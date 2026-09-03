@@ -1,13 +1,16 @@
-const CONTRACT_ADDRESS = '0xFDB301bB77e82B5CB75D9768C79B4d3Af2D19424';
+// The bonded contract carries the standing book of cover and is what the
+// scheduled agent actually sweeps, so it is what this page reads.
+const CONTRACT_ADDRESS = '0x8a516282e299CdB8356f1493533F47fE03128A55';
 const CHAIN_ID_HEX = '0x14a34'; // 84532 Base Sepolia
 const CHAIN_ID = 84532;
 const RPC_URL = 'https://base-sepolia-rpc.publicnode.com';
-const DEPLOY_BLOCK = 46260266;
+const DEPLOY_BLOCK = 46345708;
 const EXPLORER = 'https://sepolia.basescan.org';
 
 const ABI = [
   'function createPolicy(address beneficiary, string location) payable returns (uint256)',
   'function getPolicy(uint256) view returns (tuple(address funder, address beneficiary, string location, uint256 payoutAmount, bool active, bool triggered, uint256 createdAt))',
+  'function getAssertion(uint256) view returns (tuple(uint8 state, uint256 bondAmount, uint256 disputeBond, address disputer, uint256 livenessEnds, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason))',
   'function nextPolicyId() view returns (uint256)',
   'event PolicyTriggered(uint256 indexed policyId, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason, uint256 payoutAmount)',
 ];
@@ -166,7 +169,7 @@ async function loadPolicies() {
   const next = Number(await readContract.nextPolicyId());
   const policies = await Promise.all(
     Array.from({ length: next }, (_, id) => id).map(async (id) => {
-      const p = await readContract.getPolicy(id);
+      const [p, a] = await Promise.all([readContract.getPolicy(id), readContract.getAssertion(id)]);
       return {
         id,
         beneficiary: p.beneficiary,
@@ -174,12 +177,20 @@ async function loadPolicies() {
         payoutEth: ethers.formatEther(p.payoutAmount),
         active: p.active,
         triggered: p.triggered,
+        assertionState: Number(a.state), // 0 none, 1 pending, 2 disputed, 3 resolved
       };
     })
   );
 
-  animateCount(document.getElementById('stat-policies'), policies.length);
+  const covered = policies.filter(p => p.active && !p.triggered);
+  // Each policy under cover costs two live Telegraph calls per sweep: one
+  // WEATHER_FORECAST and one STORM_ALERT, both auto-routed and paid.
+  const assertable = covered.filter(p => p.assertionState === 0).length;
+
+  animateCount(document.getElementById('stat-policies'), covered.length);
+  animateCount(document.getElementById('stat-cities'), new Set(covered.map(p => p.location)).size);
   animateCount(document.getElementById('stat-triggered'), policies.filter(p => p.triggered).length);
+  animateCount(document.getElementById('stat-calls'), assertable * 2);
 
   if (policies.length === 0) {
     container.innerHTML = '';

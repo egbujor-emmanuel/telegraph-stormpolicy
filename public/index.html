@@ -22,6 +22,7 @@
     <div class="nav-links">
       <a id="nav-contract" href="#" target="_blank">Contract</a>
       <a href="#mechanism">How it works</a>
+      <a href="#signals">Signals</a>
       <a href="#bonded">Bonding</a>
       <a href="#policies">Policies</a>
       <button id="connect-btn" class="btn btn-outline btn-sm">Connect Wallet</button>
@@ -44,10 +45,10 @@
       <a href="#policies" class="btn btn-ghost">View Policies</a>
     </div>
     <div class="hero-stats" id="hero-stats">
-      <div class="stat"><span class="stat-num" id="stat-policies" data-count="0">0</span><span class="stat-label">Policies</span></div>
-      <div class="stat"><span class="stat-num" id="stat-triggered" data-count="0">0</span><span class="stat-label">Triggered</span></div>
-      <div class="stat"><span class="stat-num" data-count="2">0</span><span class="stat-label">Signals per decision</span></div>
-      <div class="stat"><span class="stat-num" data-count="100" data-suffix="%">0</span><span class="stat-label">Evidence on-chain</span></div>
+      <div class="stat"><span class="stat-num" id="stat-policies" data-count="0">0</span><span class="stat-label">Policies covered</span></div>
+      <div class="stat"><span class="stat-num" id="stat-cities" data-count="0">0</span><span class="stat-label">Cities monitored</span></div>
+      <div class="stat"><span class="stat-num" id="stat-triggered" data-count="0">0</span><span class="stat-label">On-chain triggers</span></div>
+      <div class="stat"><span class="stat-num" id="stat-calls" data-count="0">0</span><span class="stat-label">Live signals per sweep</span></div>
     </div>
   </div>
   <div class="hero-glow"></div>
@@ -61,11 +62,54 @@
       <p class="panel-desc">A persistent agent calls two independent, real Telegraph signals for each policy's location &mdash; a weather forecast and a storm alert &mdash; paid on-chain via x402. It only triggers when both corroborate, both clear a calibrated confidence threshold, and both agree on the same location.</p>
     </div>
     <div class="panel-body">
-      <div class="mech-grid">
-        <div class="mech-item"><span class="mech-label">Min. forecast confidence</span><span class="mech-value">0.50</span></div>
-        <div class="mech-item"><span class="mech-label">Precipitation probability</span><span class="mech-value">&ge; 70%</span></div>
-        <div class="mech-item"><span class="mech-label">Wind gust threshold</span><span class="mech-value">&ge; 50 km/h</span></div>
-        <div class="mech-item"><span class="mech-label">Combined risk threshold</span><span class="mech-value">0.60</span></div>
+
+      <div class="pipeline">
+        <div class="pipe-sources">
+          <div class="pipe-node pipe-signal">
+            <span class="pipe-kicker">Intent</span>
+            <span class="pipe-title">WEATHER_FORECAST</span>
+            <span class="pipe-meta">auto-routed &middot; paid via x402</span>
+          </div>
+          <div class="pipe-node pipe-signal">
+            <span class="pipe-kicker">Intent</span>
+            <span class="pipe-title">STORM_ALERT</span>
+            <span class="pipe-meta">auto-routed &middot; paid via x402</span>
+          </div>
+        </div>
+
+        <svg class="pipe-merge" viewBox="0 0 300 44" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M75 0 V14 Q75 30 120 30 H150" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M225 0 V14 Q225 30 180 30 H150" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M150 30 V44" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+
+        <div class="pipe-node pipe-gate">
+          <span class="pipe-kicker">Both must pass, independently</span>
+          <ul class="gate-list">
+            <li><span class="gate-name">Confidence</span><span class="gate-val">forecast &ge; 0.50</span></li>
+            <li><span class="gate-name">Severity</span><span class="gate-val">&ge; 70% precip &middot; &ge; 20mm &middot; &ge; 50 km/h</span></li>
+            <li><span class="gate-name">Storm risk</span><span class="gate-val">alert &ge; 0.60</span></li>
+            <li><span class="gate-name">Entity binding</span><span class="gate-val">both resolve to the covered place</span></li>
+          </ul>
+          <p class="gate-note">Any one failing holds the policy. Missing evidence fails closed, never open.</p>
+        </div>
+
+        <div class="pipe-arrow" aria-hidden="true"></div>
+
+        <div class="pipe-outcomes">
+          <div class="pipe-node pipe-out">
+            <span class="out-mark out-hold">Hold</span>
+            <span class="pipe-meta">No corroboration. Nothing moves, reason recorded.</span>
+          </div>
+          <div class="pipe-node pipe-out">
+            <span class="out-mark out-assert">Assert + bond</span>
+            <span class="pipe-meta">Evidence staked on-chain, dispute window opens.</span>
+          </div>
+          <div class="pipe-node pipe-out">
+            <span class="out-mark out-pay">Payout</span>
+            <span class="pipe-meta">Unchallenged, funds release automatically.</span>
+          </div>
+        </div>
       </div>
       <div class="mech-example">
         <div class="mech-example-head">Real trigger &mdash; Policy #1, Manila, Philippines</div>
@@ -75,6 +119,67 @@ forecast confidence: 100%   alert confidence: 82%
 tx: 0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de</pre>
         <a href="https://sepolia.basescan.org/tx/0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de" target="_blank" class="mech-link">View this transaction on Basescan &rarr;</a>
       </div>
+    </div>
+  </section>
+
+  <section id="signals" class="panel reveal">
+    <div class="panel-head">
+      <h2>What the network actually returns</h2>
+      <p class="panel-desc">Telegraph routes by intent, so which miner answers is a ranking decision &mdash; and ranking is meant to move. We measured what that means for an application: 24 auto-routed, x402-paid calls across 12 cities on five continents.</p>
+    </div>
+    <div class="panel-body">
+
+      <div class="shape-compare">
+        <div class="shape-card">
+          <div class="shape-head">
+            <span class="shape-miner">Miner 4433</span>
+            <span class="shape-endpoint">/weather-forecast</span>
+          </div>
+          <div class="chips">
+            <span class="chip chip-shared">confidence</span>
+            <span class="chip">reason</span>
+            <span class="chip">verdict</span>
+          </div>
+          <p class="shape-note">Returns the forecast as an English sentence, numbers inside the prose.</p>
+        </div>
+
+        <div class="shape-vs"><span>same intent</span></div>
+
+        <div class="shape-card">
+          <div class="shape-head">
+            <span class="shape-miner">Miner 910</span>
+            <span class="shape-endpoint">/forecast</span>
+          </div>
+          <div class="chips">
+            <span class="chip chip-shared">confidence</span>
+            <span class="chip">answer</span>
+            <span class="chip">as_of</span>
+            <span class="chip">canonical</span>
+            <span class="chip">days</span>
+            <span class="chip">forecast</span>
+            <span class="chip">location</span>
+            <span class="chip">risk_flags</span>
+            <span class="chip">source</span>
+            <span class="chip">summary</span>
+          </div>
+          <p class="shape-note">Returns hourly and daily series, in millimetres and metres per second.</p>
+        </div>
+      </div>
+
+      <p class="shape-punch">Two miners, the same intent, <strong>exactly one field name in common</strong>.</p>
+
+      <div class="compare-stats">
+        <div class="cmp">
+          <span class="cmp-num cmp-bad">0<span class="cmp-den">/24</span></span>
+          <span class="cmp-label">Severity derivable by a reader bound to one miner's field names</span>
+        </div>
+        <div class="cmp">
+          <span class="cmp-num cmp-good">24<span class="cmp-den">/24</span></span>
+          <span class="cmp-label">Severity derivable by the shape-agnostic adapter this app uses</span>
+        </div>
+      </div>
+
+      <p class="panel-note">So the schema an application receives is a property of the network at call time, not a fixed contract &mdash; and a reader bound to one shape keeps returning 200 OK while quietly finding nothing. StormPolicy derives severity from whichever representation is present: probability, millimetres, an m/s series, risk flags, official alerts, a threshold breach, or prose. Every figure here regenerates from committed raw data with <code>npm run study:report</code>.</p>
     </div>
   </section>
 

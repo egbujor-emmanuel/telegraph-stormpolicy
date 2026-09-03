@@ -1,12 +1,12 @@
 {
-  "address": "0xE3ED291780d967dB04396f4d7b9f4b18c860c68f",
+  "address": "0x8a516282e299CdB8356f1493533F47fE03128A55",
   "agent": "0x98eC4d722048EB7cf6386c8F5C9757e9B0143F8c",
-  "arbiter": "0xf14CF5DF593365B9a4aC76E3a28E0916852f5dd9",
-  "disputer": "0xe7790f94dC2223333F2Ea8f6d45124da853A7532",
+  "arbiter": "0x2ed35DBA0Da494AFc1C79dED89De0d00AeF5b804",
+  "disputer": "0xf264dd1D9420CE19396051b0d469f4eb89ca67e6",
   "agentBondWei": "3000000000000",
   "livenessSeconds": 180,
-  "deployTxHash": "0xd102459bbf23e6f82d377f503863ebc65fdc09b28950de49cf67f2696036ed21",
-  "blockNumber": 46334335,
+  "deployTxHash": "0x21021a33a0c3d49bd44d7fbecb703db07c8741547638ccd95677c574c00b9588",
+  "blockNumber": 46345708,
   "chainId": 84532,
-  "deployedAt": "2026-09-03T12:02:48.910Z"
+  "deployedAt": "2026-09-03T18:21:59.173Z"
 }

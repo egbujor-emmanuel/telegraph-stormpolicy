@@ -296,6 +296,12 @@ contract StormPolicyBonded {
             address disputer = a.disputer;
             emit DisputeResolved(policyId, false, disputer, a.bondAmount);
 
+            // A policy the agent asserted wrongly is not spent -- the storm it
+            // was wrong about may still arrive later. Clearing the assertion
+            // returns the policy to an assertable state so cover continues,
+            // rather than leaving it funded but permanently unusable.
+            delete assertions[policyId];
+
             (bool ok, ) = disputer.call{value: totalBonds}("");
             require(ok, "slash payout failed");
         }

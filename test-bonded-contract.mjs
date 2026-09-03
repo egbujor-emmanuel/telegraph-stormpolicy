@@ -65,9 +65,41 @@ async function createPolicy(contract, beneficiary, location) {
   const arbiter = new ethers.Wallet(keys.arbiterPrivateKey, provider);
   const disputer = new ethers.Wallet(keys.disputerPrivateKey, provider);
 
-  const asAgent = new ethers.Contract(address, abi, agent);
-  const asArbiter = new ethers.Contract(address, abi, arbiter);
-  const asDisputer = new ethers.Contract(address, abi, disputer);
+  // This public RPC's nonce accounting lags behind recent sends, so a
+  // back-to-back suite intermittently reuses a nonce. NonceManager keeps a
+  // local count, and the proxy below re-syncs it and retries when the chain
+  // disagrees anyway. Balances are read from the raw wallet addresses, which
+  // none of this changes.
+  function resilient(signer) {
+    const managed = new ethers.NonceManager(signer);
+    const contract = new ethers.Contract(address, abi, managed);
+    return new Proxy(contract, {
+      get(target, prop, receiver) {
+        const original = Reflect.get(target, prop, receiver);
+        if (typeof original !== 'function' || typeof prop !== 'string') return original;
+        return async (...args) => {
+          for (let attempt = 1; ; attempt++) {
+            try {
+              return await original.apply(target, args);
+            } catch (err) {
+              const message = String(err?.message ?? '');
+              const nonceClash = err?.code === 'NONCE_EXPIRED'
+                || message.includes('nonce too low')
+                || message.includes('nonce has already been used')
+                || message.includes('replacement transaction underpriced');
+              if (!nonceClash || attempt >= 5) throw err;
+              managed.reset();
+              await new Promise(r => setTimeout(r, 1500 * attempt));
+            }
+          }
+        };
+      },
+    });
+  }
+
+  const asAgent = resilient(agent);
+  const asArbiter = resilient(arbiter);
+  const asDisputer = resilient(disputer);
 
   console.log('contract:', address);
   console.log('agent:   ', agent.address);
@@ -87,28 +119,38 @@ async function createPolicy(contract, beneficiary, location) {
     let a = await asAgent.getAssertion(id);
     check('assertion is Pending after assertTrigger', Number(a.state) === 1);
 
-    const disputerBefore = await provider.getBalance(disputer.address);
     tx = await asDisputer.dispute(id, { value: BOND });
-    await tx.wait();
+    const disputeReceipt = await tx.wait();
     const disputeCost = await txCost(provider, tx.hash);
     a = await asAgent.getAssertion(id);
     check('assertion is Disputed after dispute', Number(a.state) === 2);
     check('disputer recorded', a.disputer.toLowerCase() === disputer.address.toLowerCase());
 
+    // Balance movements are measured across the single block each transfer
+    // lands in. A whole-test delta would have to model every fee the account
+    // paid in between, which is exactly the kind of bookkeeping that makes a
+    // financial assertion fragile rather than exact.
+    const disputerStakeDelta =
+      (await provider.getBalance(disputer.address, disputeReceipt.blockNumber))
+      - (await provider.getBalance(disputer.address, disputeReceipt.blockNumber - 1));
+
     const agentBefore = await provider.getBalance(agent.address);
     tx = await asArbiter.resolveDispute(id, true);
-    await tx.wait();
+    const resolveReceipt = await tx.wait();
 
     const p = await asAgent.getPolicy(id);
     const beneficiaryBal = await provider.getBalance(beneficiary);
     const agentAfter = await provider.getBalance(agent.address);
-    const disputerAfter = await provider.getBalance(disputer.address);
+    const disputerAtResolve =
+      (await provider.getBalance(disputer.address, resolveReceipt.blockNumber))
+      - (await provider.getBalance(disputer.address, resolveReceipt.blockNumber - 1));
 
     check('policy marked triggered', p.triggered === true);
     check('policy no longer active', p.active === false);
     check('beneficiary received full payout', beneficiaryBal === PAYOUT, ethers.formatEther(beneficiaryBal) + ' ETH');
     check('agent received own bond + disputer bond (2x bond)', agentAfter - agentBefore === BOND * 2n, '+' + ethers.formatEther(agentAfter - agentBefore) + ' ETH');
-    check('disputer lost exactly their bond (slashed)', disputerBefore - disputerAfter - disputeCost === BOND, '-' + ethers.formatEther(disputerBefore - disputerAfter - disputeCost) + ' ETH net of exact fees');
+    check('disputer staked exactly one bond', -disputerStakeDelta - disputeCost === BOND, '-' + ethers.formatEther(-disputerStakeDelta - disputeCost) + ' ETH excluding their own gas');
+    check('disputer got nothing back after losing', disputerAtResolve === 0n, ethers.formatEther(disputerAtResolve) + ' ETH at the resolve block');
   }
 
   // ─────────────────────────────────────────────────────────────────────
@@ -129,18 +171,39 @@ async function createPolicy(contract, beneficiary, location) {
 
     const agentBefore = await provider.getBalance(agent.address);
     tx = await asArbiter.resolveDispute(id, false);
-    await tx.wait();
+    const resolveReceipt = await tx.wait();
 
     const p = await asAgent.getPolicy(id);
     const beneficiaryBal = await provider.getBalance(beneficiary);
     const agentAfter = await provider.getBalance(agent.address);
-    const disputerAfter = await provider.getBalance(disputer.address);
+
+    // Measure the slashing payout at the block it happens in, rather than as
+    // a whole-test balance delta. The disputer pays gas on their own
+    // transactions, so a net-of-fees figure has to model every fee they paid;
+    // a block-scoped delta on an address that sent nothing in that block is
+    // the transfer itself, with no fee accounting to get wrong.
+    const disputerAtResolve = await provider.getBalance(disputer.address, resolveReceipt.blockNumber);
+    const disputerBeforeResolve = await provider.getBalance(disputer.address, resolveReceipt.blockNumber - 1);
+    const paidOut = disputerAtResolve - disputerBeforeResolve;
 
     check('policy still active (not triggered)', p.active === true && p.triggered === false);
     check('beneficiary received NOTHING', beneficiaryBal === 0n);
     check('agent bond NOT returned (slashed)', agentAfter === agentBefore, 'delta ' + ethers.formatEther(agentAfter - agentBefore));
-    // The disputer is paid 2 bonds but staked 1, so the net gain is +1 bond.
-    check('disputer net +1 bond (own bond back + agent bond slashed to them)', disputerAfter - disputerBefore + disputeCost === BOND, '+' + ethers.formatEther(disputerAfter - disputerBefore + disputeCost) + ' ETH net of exact fees');
+    // The disputer is paid both bonds -- their own back, plus the agent's.
+    check('disputer paid exactly 2 bonds (own + the agent\'s slashed bond)', paidOut === BOND * 2n, ethers.formatEther(paidOut) + ' ETH received at the resolve block');
+    check('net of their stake, the disputer gains exactly 1 bond', paidOut - BOND === BOND, '+' + ethers.formatEther(paidOut - BOND) + ' ETH');
+    void disputeCost;
+
+    // Cover has to survive being wrong once. A policy the agent asserted
+    // wrongly is not spent -- the storm it was wrong about may still arrive
+    // later -- so the assertion clears and the policy stays assertable,
+    // rather than sitting funded but permanently unusable.
+    const cleared = await asAgent.getAssertion(id);
+    check('assertion cleared back to None after a slash', Number(cleared.state) === 0, `state=${Number(cleared.state)}`);
+
+    const reassert = await asAgent.assertTrigger(id, FORECAST_HASH, ALERT_HASH, 9000, 9000, 're-assertion after an earlier one was ruled wrong', { value: BOND });
+    await reassert.wait();
+    check('policy can be asserted again after a slash', Number((await asAgent.getAssertion(id)).state) === 1);
     void assertGas;
   }
 
