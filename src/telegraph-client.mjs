@@ -78,12 +78,21 @@ export async function askTelegraph(query, context = undefined) {
   return withRetry(() => askTelegraphOnce(query, context));
 }
 
-async function askTelegraphOnce(query, context) {
+/// Direct ask against one specific miner, bypassing the router. The
+/// production path deliberately does NOT use this -- routing is the
+/// mechanism worth exercising. It exists so the compatibility study can
+/// compare how different miners answer the same intent.
+export async function askMiner(minerId, query, context = undefined) {
+  return withRetry(() => askTelegraphOnce(query, context, minerId));
+}
+
+async function askTelegraphOnce(query, context, minerId) {
   const payingFetch = getPayingFetch();
   const body = { query };
   if (context) body.context = context;
 
-  const res = await payingFetch(`${ENGINE_URL}/v1/ask`, {
+  const path = minerId ? `/v1/ask/${minerId}` : '/v1/ask';
+  const res = await payingFetch(`${ENGINE_URL}${path}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),

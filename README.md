@@ -17,6 +17,42 @@ Telegraph's own hackathon rules name "verified intelligence directly triggering 
 5. It **binds signals to the policy's location**, not just to a severity number. During real testing (not staged) against Jakarta, Indonesia — a location never touched before — the STORM_ALERT miner returned a signal scoped to "South China Sea" rather than Jakarta itself. The entity-binding check caught this live and correctly held instead of releasing a payout on a right-severity, wrong-place signal.
 6. If — and only if — all of the above hold, `triggerPayout` is called on-chain and funds move automatically.
 
+## What routing actually returns: a compatibility study
+
+Telegraph routes by **intent**, not by miner: an application asks a question and the network's own ranking decides who answers. That is the mechanism worth exercising, and it is the one this project uses in production — `POST /engine/v1/ask`, never a pinned miner ID.
+
+It also means the response schema is not a constant. Miners implement the same intent independently, declare their own endpoints, and shape their output as they see fit. Rather than assume how wide that spread is, we measured it.
+
+**Method.** [`study-miner-shapes.mjs`](study-miner-shapes.mjs) makes real, x402-paid, auto-routed calls for both intents across 12 locations on five continents, recording which miner the router selected, the response shape, and whether two different consumers can derive what they need — a **canonical-field reader** (reads the documented structured field names, a reasonable first integration) versus this project's **shape-agnostic adapter**. [`study-miner-comparison.mjs`](study-miner-comparison.mjs) then bypasses the router to call individual miners directly and compare them side by side. Every number below regenerates with `npm run study:report` from the committed raw data.
+
+**Result** — 24 routed calls, 12 locations, $0.24 total, zero failures, median latency 2.0s:
+
+| | canonical-field reader | shape-agnostic adapter |
+|---|---|---|
+| `WEATHER_FORECAST` severity derivable | **0 / 12 (0%)** | 12 / 12 (100%) |
+| `STORM_ALERT` severity derivable | **0 / 12 (0%)** | 12 / 12 (100%) |
+| Signal bound to the requested place | — | 24 / 24 (100%) |
+
+**Why the spread is that wide.** Calling two `WEATHER_FORECAST` miners directly shows how independently they are built:
+
+| miner | declared endpoint | result fields |
+|---|---|---|
+| 4433 · LiveCert Operational Signals | `/weather-forecast` | `confidence`, `reason`, `verdict` — the forecast itself is an English sentence |
+| 910 · OnLookout Weather Forecast | `/forecast` | `answer`, `as_of`, `canonical`, `confidence`, `days`, `forecast`, `location`, `risk_flags`, `source`, `summary` |
+
+Two miners, the same intent, and **exactly one field name in common** (`confidence`). One returns hourly and daily series in millimetres and metres per second; the other returns prose with the numbers inside it. The `STORM_ALERT` miner (7306 · SkyWire, endpoint `/storm`) is different again, reporting `level`, `breach`, `official_alerts` and raw measurements with no single risk score at all.
+
+**What this means for anyone building on Telegraph.** Which miner answers is a ranking decision, and ranking is exactly what the flywheel is supposed to change. So the schema an application receives is a property of the network *at call time*, not a fixed contract. An integration written against one miner's field names keeps returning HTTP 200 after the router moves on — it simply stops finding the fields it was looking for. For a consumer that acts on thresholds, that reads as *"conditions are never severe"* rather than as a failure, which is the quietest possible way for an automated system to be wrong.
+
+This project therefore treats parsing as an **adapter layer**, not field access:
+
+- severity is derived from whichever representation is present — probability, millimetres, an m/s series, declared risk flags, official alerts, a threshold breach, or prose;
+- an explicit numeric reading is never inflated by that same miner's coarser label, so a precise `0.57` cannot be rounded up into a payout by the word next to it;
+- when nothing usable is present the signal is `null` and the decision holds — it **fails closed, never open**;
+- readings parsed from prose are recorded as prose-derived, so weaker evidence is visible in the on-chain reason instead of silently ranking equal to structured fields.
+
+[73 conformance tests](test-regressions.mjs) pin these guarantees against captured live responses from every miner shape above, and run in CI on every push.
+
 ## MCP tools
 
 The same pipeline is exposed as an MCP server (`mcp/server.mjs`) so any MCP-speaking agent (Claude Desktop, Cursor, ElizaOS, etc.) can create and monitor policies directly:

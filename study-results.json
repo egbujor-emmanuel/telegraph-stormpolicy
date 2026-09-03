@@ -1,0 +1,926 @@
+[
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Manila, Philippines",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1699,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": true
+    },
+    "at": "2026-09-03T17:54:21.180Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Manila, Philippines",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 5487,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:54:34.326Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Jakarta, Indonesia",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1117,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:54:41.972Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Jakarta, Indonesia",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 2016,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:54:51.443Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Miami, Florida",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1116,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:54:58.635Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Miami, Florida",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3894,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:55:07.586Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Reykjavik, Iceland",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1090,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": true
+    },
+    "at": "2026-09-03T17:55:13.846Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Reykjavik, Iceland",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 2824,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:55:22.779Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Cape Town, South Africa",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1094,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:55:30.995Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Cape Town, South Africa",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3109,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:55:39.155Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Tokyo, Japan",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1119,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": true
+    },
+    "at": "2026-09-03T17:55:44.972Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Tokyo, Japan",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 2958,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:55:55.630Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Mumbai, India",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1079,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": true
+    },
+    "at": "2026-09-03T17:56:42.517Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Mumbai, India",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 2978,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:56:51.511Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "London, United Kingdom",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1068,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:56:58.621Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "London, United Kingdom",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3628,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:09.250Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Sydney, Australia",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1426,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:17.058Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Sydney, Australia",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 2855,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:24.794Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Sao Paulo, Brazil",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1097,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:31.192Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Sao Paulo, Brazil",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3103,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:38.867Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Zurich, Switzerland",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1185,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:45.620Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Zurich, Switzerland",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3034,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:57:55.559Z"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "location": "Lagos, Nigeria",
+    "repeat": 1,
+    "routedIntent": "WEATHER_FORECAST",
+    "minerId": "4433",
+    "minerName": "LiveCert Operational Signals",
+    "costUsd": 0.01,
+    "durationMs": 1122,
+    "shape": [
+      "confidence",
+      "reason",
+      "verdict"
+    ],
+    "shapeKey": "confidence,reason,verdict",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": false
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "prose",
+      "severe": true
+    },
+    "at": "2026-09-03T17:58:01.865Z"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "location": "Lagos, Nigeria",
+    "repeat": 1,
+    "routedIntent": "STORM_ALERT",
+    "minerId": "7306",
+    "minerName": "SkyWire Storm Alert",
+    "costUsd": 0.01,
+    "durationMs": 3279,
+    "shape": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "shapeKey": "as_of,attribution,breach,confidence,country,intent,latitude,level,location,longitude,model_updated_at,official_alerts,peak_gust_kmh,peak_gust_mph,peak_wind_kmh,source,summary,threshold_asked,threshold_unit,thunderstorms,total_precipitation_mm,total_snowfall_cm,wikidata_id,window_hours",
+    "baseline": {
+      "derivedSeverity": false,
+      "usableLocation": true
+    },
+    "adapter": {
+      "derivedSeverity": true,
+      "usableLocation": true,
+      "boundToPolicy": true,
+      "derivedFrom": "structured",
+      "severe": false
+    },
+    "at": "2026-09-03T17:58:10.002Z"
+  }
+]

@@ -1,0 +1,70 @@
+[
+  {
+    "intent": "WEATHER_FORECAST",
+    "minerId": 4433,
+    "endpoint": "/weather-forecast",
+    "status": 200,
+    "minerName": "LiveCert Operational Signals",
+    "resultKeys": [
+      "confidence",
+      "error",
+      "reason",
+      "verdict"
+    ],
+    "sample": "{\"confidence\":0,\"error\":\"invalid_location\",\"reason\":\"An hourly weather forecast could not be produced because no location was supplied with this request. Supply a place name such as London, or a latitude and longitude, and the hourly temperature in Celsius, precipitation probability and wind speed can be returned.\",\"verdict\":\"unknown\"}"
+  },
+  {
+    "intent": "WEATHER_FORECAST",
+    "minerId": 910,
+    "endpoint": "/forecast",
+    "status": 200,
+    "minerName": "OnLookout Weather Forecast",
+    "resultKeys": [
+      "answer",
+      "as_of",
+      "canonical",
+      "confidence",
+      "days",
+      "forecast",
+      "location",
+      "risk_flags",
+      "source",
+      "summary"
+    ],
+    "sample": "{\"answer\":\"Berlin forecast: today high 23C low 15C overcast; tomorrow high 26C low 16C overcast. Nearest hour 2026-09-03T00:00Z: 16.0C, 0.0mm, 1.5m/s, mainly clear.\",\"as_of\":\"2026-09-03T18:05:11Z\",\"canonical\":\"WEATHER_FORECAST|52.5200,13.4200|2026-09-03T18:05:11Z|16.0C|0.0mm|1.5ms|mainly_clear|none|c0.988\",\"confidence\":0.9875,\"days\":[{\"condition\":\"overcast\",\"date\":\"2026-09-03\",\"high_c\":23.4,\"label"
+  },
+  {
+    "intent": "STORM_ALERT",
+    "minerId": 7306,
+    "endpoint": "/storm",
+    "status": 200,
+    "minerName": "SkyWire Storm Alert",
+    "resultKeys": [
+      "as_of",
+      "attribution",
+      "breach",
+      "confidence",
+      "country",
+      "intent",
+      "latitude",
+      "level",
+      "location",
+      "longitude",
+      "model_updated_at",
+      "official_alerts",
+      "peak_gust_kmh",
+      "peak_gust_mph",
+      "peak_wind_kmh",
+      "source",
+      "summary",
+      "threshold_asked",
+      "threshold_unit",
+      "thunderstorms",
+      "total_precipitation_mm",
+      "total_snowfall_cm",
+      "wikidata_id",
+      "window_hours"
+    ],
+    "sample": "{\"as_of\":\"2026-09-03T18:05:19.795Z\",\"attribution\":\"Data from MET Norway, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Values converted from SI units and summarised by SkyWire. Place coordinates from Wikidata, CC0 1.0 (https://creativecommons.org/publicdomain/zero/1.0/). Data from the US National Weather Service (api.weather.gov), a public service of the United States Government.\",\"bre"
+  }
+]

@@ -17,7 +17,10 @@
     "demo:bonded": "node demo-bonded-e2e.mjs",
     "sweep:bonded": "node scripts/sweep-bonded.mjs",
     "mcp": "node mcp/server.mjs",
-    "test:mcp": "node test-mcp-server.mjs"
+    "test:mcp": "node test-mcp-server.mjs",
+    "study": "node study-miner-shapes.mjs",
+    "study:compare": "node study-miner-comparison.mjs",
+    "study:report": "node study-report.mjs"
   },
   "keywords": [
     "telegraph-protocol",
