@@ -68,6 +68,31 @@ Requires `TEST_WALLET_PRIVATE_KEY` (funded with Base Sepolia ETH for gas and USD
 
 `server/index.mjs` (an Express API with an agent-key-gated "assess"/"check now" surface) is kept as a local dev/testing convenience — the deployed site at the link above no longer depends on it; it reads the contract directly, and the real trigger loop is the scheduled GitHub Actions job, not this server.
 
-## What's deliberately not here
+## Skin in the game: the bonded contract
 
-A bond/slashing mechanism, where the agent would stake funds against being wrong and lose them if a trigger is later shown incorrect, was considered and left out. It's the more sophisticated design, but building a dispute window and slashing logic solidly in the time available risked breaking something in a live demo. Documented here as a natural next step rather than shipped half-working.
+The first version of this README listed a bond/slashing mechanism as the obvious next step and deliberately left it out. It's now built, deployed, and tested.
+
+**[`StormPolicyBonded.sol`](contracts/StormPolicyBonded.sol)** — [`0xE3ED291780d967dB04396f4d7b9f4b18c860c68f`](https://sepolia.basescan.org/address/0xE3ED291780d967dB04396f4d7b9f4b18c860c68f) on Base Sepolia.
+
+Instead of the agent paying out directly, it now has to put money behind its claim:
+
+1. **Assert.** The agent stakes a bond and asserts a policy should trigger, with the same evidence trail attached. No funds move yet.
+2. **Dispute window.** For the liveness period that follows, anyone can dispute by matching the bond.
+3. **Finalize.** If nobody disputes, *anyone* can finalize — the payout releases and the bond returns. This is the expected common case.
+4. **Arbitrate.** If disputed, an arbiter rules. The loser's bond goes to the winner. If the agent was wrong, the payout never happens and the policy stays open.
+
+So a dishonest or sloppy trigger stops being free: asserting something false costs the agent its bond, and catching a false assertion pays the person who caught it.
+
+### Where the design comes from
+
+This follows [UMA's Optimistic Oracle](https://docs.uma.xyz/protocol-overview/how-does-umas-oracle-work) — a bonded assertion accepted automatically unless challenged within a liveness window (UMA defaults to two hours, configurable up to two days) — combined with [Reality.eth](https://realitio.github.io/docs/html/arbitrators.html)'s idea that a matching bond is what buys you the right to challenge an answer.
+
+### What is still simplified, honestly
+
+- **A single trusted arbiter, not a decentralized court.** UMA escalates to its DVM (a token-holder commit-reveal vote); Reality.eth escalates bonds across multiple rounds before falling back to an arbitrator contract. Both are substantial systems in their own right. This contract goes straight from "disputed" to one arbiter address, which is a real centralization point. Notably, production parametric insurers ([Arbol](https://www.arbol.io/post/smart-contracts-and-blockchain-can-help-close-the-global-protection-gap-enable-businesses-to-build-climate-resilience), Etherisc) make the same trade today — a trusted party as the oracle-dispute fallback. The difference here is that it's wired through a real bond/slash mechanism rather than an unaccountable admin pause. The role can be handed to a multisig via `updateArbiter` without redeploying.
+- **Fixed bond size**, set at deploy time, not scaled to each policy's payout.
+- **No timeout if the arbiter goes silent** on a live dispute.
+
+### Verified
+
+`npm run test:bonded` — **25/25 passing** against the live contract on Base Sepolia, covering all three economic outcomes (undisputed finalize; disputed with the agent vindicated; disputed with the agent slashed) plus nine revert guards. Balance assertions account for the OP-stack L1 data fee, so value conservation is checked exactly rather than approximately.

@@ -1,0 +1,12 @@
+{
+  "address": "0xE3ED291780d967dB04396f4d7b9f4b18c860c68f",
+  "agent": "0x98eC4d722048EB7cf6386c8F5C9757e9B0143F8c",
+  "arbiter": "0xf14CF5DF593365B9a4aC76E3a28E0916852f5dd9",
+  "disputer": "0xe7790f94dC2223333F2Ea8f6d45124da853A7532",
+  "agentBondWei": "3000000000000",
+  "livenessSeconds": 180,
+  "deployTxHash": "0xd102459bbf23e6f82d377f503863ebc65fdc09b28950de49cf67f2696036ed21",
+  "blockNumber": 46334335,
+  "chainId": 84532,
+  "deployedAt": "2026-09-03T12:02:48.910Z"
+}
