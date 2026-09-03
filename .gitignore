@@ -2,3 +2,5 @@ node_modules/
 .env
 .bonded-test-keys.json
 
+bonded-clean.txt
+bonded-test-out.txt
