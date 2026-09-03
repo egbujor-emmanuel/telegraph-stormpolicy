@@ -26,36 +26,19 @@ function getPayingFetch() {
   return _fetchWithPayment;
 }
 
-/// Auto-routed ask: Telegraph's LLM router classifies the query into an
-/// Intent and picks the top-ranked miner for it -- this is the real
-/// "quality flywheel" mechanism (ranking + probabilistic routing), not a
-/// call to a hardcoded miner ID.
 /// The x402 payment handshake occasionally surfaces an empty-bodied 402
 /// instead of completing the sign-and-retry. It clears on a retry -- but an
 /// unretried one used to abort an entire scheduled sweep, so no policy got
-/// checked because of one hiccup on one call. Retry transient failures with
-/// a short backoff before giving up.
-const MAX_ATTEMPTS = 3;
+/// checked because of one hiccup on one call.
+export const MAX_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 1500;
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-export async function askTelegraph(query, context = undefined) {
-  let lastErr;
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    try {
-      return await askTelegraphOnce(query, context);
-    } catch (err) {
-      lastErr = err;
-      if (!isTransient(err) || attempt === MAX_ATTEMPTS) break;
-      console.warn(`[telegraph] transient failure (attempt ${attempt}/${MAX_ATTEMPTS}): ${err.message.slice(0, 120)} -- retrying`);
-      await sleep(RETRY_DELAY_MS * attempt);
-    }
-  }
-  throw lastErr;
-}
-
-function isTransient(err) {
+/// Distinguishes "try again, this is the network being flaky" from "this
+/// request is wrong and will fail identically forever". Retrying the latter
+/// just wastes a scheduled run's time budget.
+export function isTransient(err) {
   const m = String(err?.message ?? '');
   return m.includes('Non-JSON response')
     || m.includes('status 402')
@@ -67,6 +50,32 @@ function isTransient(err) {
     || m.includes('fetch failed')
     || m.includes('ETIMEDOUT')
     || m.includes('ECONNRESET');
+}
+
+/// Retries an operation while its failure looks transient. Exported
+/// separately from askTelegraph so the retry policy can be tested
+/// deterministically, without live network calls or real payments.
+export async function withRetry(fn, { attempts = MAX_ATTEMPTS, delayMs = RETRY_DELAY_MS, label = 'telegraph' } = {}) {
+  let lastErr;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      lastErr = err;
+      if (!isTransient(err) || attempt === attempts) break;
+      console.warn(`[${label}] transient failure (attempt ${attempt}/${attempts}): ${String(err.message).slice(0, 120)} -- retrying`);
+      await sleep(delayMs * attempt);
+    }
+  }
+  throw lastErr;
+}
+
+/// Auto-routed ask: Telegraph's LLM router classifies the query into an
+/// Intent and picks the top-ranked miner for it -- this is the real
+/// "quality flywheel" mechanism (ranking + probabilistic routing), not a
+/// call to a hardcoded miner ID.
+export async function askTelegraph(query, context = undefined) {
+  return withRetry(() => askTelegraphOnce(query, context));
 }
 
 async function askTelegraphOnce(query, context) {

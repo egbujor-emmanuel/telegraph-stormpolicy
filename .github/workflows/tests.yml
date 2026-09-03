@@ -1,0 +1,38 @@
+name: Regression Tests
+
+# These guard three bugs that only showed up when the pipeline ran against
+# live Telegraph signals: a non-string location shape crashing a whole
+# sweep, a severity gate that silently could never fire, and a transient
+# 402 aborting a scheduled run. No network calls, no payments -- safe to
+# run on every push.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  regressions:
+    runs-on: ubuntu-latest
+    steps:
+      # Full history: the provenance step below reads the pre-fix sources
+      # out of git, which a shallow clone would not contain.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - run: npm ci
+
+      - name: Decision-engine and retry regressions
+        run: npm run test:regressions
+
+      - name: Confirm the guarded bugs were genuinely broken pre-fix
+        run: |
+          mkdir -p ../oldcode
+          git show cf8b0ed:src/decision-engine.mjs > ../oldcode/decision-engine-OLD.mjs
+          git show 2bd1659:src/telegraph-client.mjs > ../oldcode/telegraph-client-OLD.mjs
+          node verify-bugs-were-real.mjs ../oldcode

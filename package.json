@@ -13,6 +13,7 @@
     "compile:bonded": "node compile-bonded.mjs",
     "deploy:bonded": "node deploy-bonded.mjs",
     "test:bonded": "node test-bonded-contract.mjs",
+    "test:regressions": "node test-regressions.mjs",
     "demo:bonded": "node demo-bonded-e2e.mjs",
     "sweep:bonded": "node scripts/sweep-bonded.mjs",
     "mcp": "node mcp/server.mjs",
