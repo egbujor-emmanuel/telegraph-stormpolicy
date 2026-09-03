@@ -22,6 +22,7 @@
     <div class="nav-links">
       <a id="nav-contract" href="#" target="_blank">Contract</a>
       <a href="#mechanism">How it works</a>
+      <a href="#bonded">Bonding</a>
       <a href="#policies">Policies</a>
       <button id="connect-btn" class="btn btn-outline btn-sm">Connect Wallet</button>
     </div>
@@ -74,6 +75,31 @@ forecast confidence: 100%   alert confidence: 82%
 tx: 0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de</pre>
         <a href="https://sepolia.basescan.org/tx/0xf94f0cb6cfef53b6826ba7e87c8c502e33572a1949485403f1380d16f7f0f0de" target="_blank" class="mech-link">View this transaction on Basescan &rarr;</a>
       </div>
+    </div>
+  </section>
+
+  <section id="bonded" class="panel reveal">
+    <div class="panel-head">
+      <h2>Skin in the game</h2>
+      <p class="panel-desc">An agent that can move money should have something to lose when it's wrong. In the bonded contract the agent stakes a bond behind its claim instead of paying out directly &mdash; anyone can dispute by matching that bond, and the loser's stake goes to the winner.</p>
+    </div>
+    <div class="panel-body">
+      <ol class="flow-list">
+        <li><span class="flow-step">Assert</span> The agent stakes a bond and submits its evidence. No funds move yet.</li>
+        <li><span class="flow-step">Dispute window</span> Anyone can challenge by matching the bond.</li>
+        <li><span class="flow-step">Finalize</span> Unchallenged, <em>anyone</em> can release the payout; the bond returns.</li>
+        <li><span class="flow-step">Arbitrate</span> If challenged, an arbiter rules and the loser's bond pays the winner.</li>
+      </ol>
+      <div class="mech-example">
+        <div class="mech-example-head">Verified on Base Sepolia &mdash; 25/25 tests passing</div>
+        <pre class="output">undisputed      -> payout released, bond returned
+disputed, agent right -> payout released, agent takes disputer's bond
+disputed, agent wrong -> no payout, agent's bond slashed to disputer
+
+Value conservation checked exactly, including the OP-stack L1 data fee.</pre>
+        <a href="https://sepolia.basescan.org/address/0xE3ED291780d967dB04396f4d7b9f4b18c860c68f" target="_blank" class="mech-link">View the bonded contract on Basescan &rarr;</a>
+      </div>
+      <p class="panel-note">Modelled on UMA's Optimistic Oracle and Reality.eth. The arbiter is a single trusted address rather than a decentralized court &mdash; a real limitation, documented rather than papered over, and the same trade production parametric insurers make today.</p>
     </div>
   </section>
 
