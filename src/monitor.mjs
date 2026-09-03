@@ -43,7 +43,13 @@ export async function checkAllPolicies() {
   for (let id = 0n; id < next; id++) {
     const p = await contract.getPolicy(id);
     if (!p.active) continue;
-    results.push(await checkAndTriggerPolicy(id));
+    // One policy's failure must not abort the sweep for every other policy.
+    try {
+      results.push(await checkAndTriggerPolicy(id));
+    } catch (err) {
+      console.error(`[policy ${id}] check failed: ${err.message}`);
+      results.push({ policyId: id.toString(), error: err.message });
+    }
   }
   return results;
 }

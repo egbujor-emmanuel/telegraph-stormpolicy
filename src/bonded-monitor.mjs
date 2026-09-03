@@ -56,11 +56,17 @@ export async function finalizeMatured() {
     if (Number(a.state) !== AssertionState.Pending) continue;
     if (now < a.livenessEnds) continue;
 
-    const tx = await contract.finalize(id);
-    console.log(`[policy ${id}] finalize tx: ${tx.hash}`);
-    const receipt = await tx.wait();
-    console.log(`[policy ${id}] payout released, bond returned (block ${receipt.blockNumber})`);
-    finalized.push({ policyId: id.toString(), txHash: tx.hash, blockNumber: receipt.blockNumber });
+    // One policy failing must not abort the rest of the sweep.
+    try {
+      const tx = await contract.finalize(id);
+      console.log(`[policy ${id}] finalize tx: ${tx.hash}`);
+      const receipt = await tx.wait();
+      console.log(`[policy ${id}] payout released, bond returned (block ${receipt.blockNumber})`);
+      finalized.push({ policyId: id.toString(), txHash: tx.hash, blockNumber: receipt.blockNumber });
+    } catch (err) {
+      console.error(`[policy ${id}] finalize failed: ${err.shortMessage || err.message}`);
+      finalized.push({ policyId: id.toString(), error: err.shortMessage || err.message });
+    }
   }
   return finalized;
 }
@@ -78,7 +84,15 @@ export async function sweepBonded() {
     if (!p.active) continue;
     const a = await contract.getAssertion(id);
     if (Number(a.state) !== AssertionState.None) continue;
-    asserted.push(await assertPolicyIfTriggered(id));
+
+    // A transient Telegraph failure on one policy must not stop the others
+    // from being assessed -- a scheduled sweep gets one shot per run.
+    try {
+      asserted.push(await assertPolicyIfTriggered(id));
+    } catch (err) {
+      console.error(`[policy ${id}] assessment failed: ${err.message}`);
+      asserted.push({ policyId: id.toString(), error: err.message });
+    }
   }
   return { finalized, asserted };
 }

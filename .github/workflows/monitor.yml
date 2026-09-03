@@ -31,4 +31,4 @@ jobs:
       - name: Sweep the bonded contract (finalize matured, assert new)
         env:
           TEST_WALLET_PRIVATE_KEY: ${{ secrets.TEST_WALLET_PRIVATE_KEY }}
-        run: node -e "import('./src/bonded-monitor.mjs').then(m => m.sweepBonded()).then(r => console.log(JSON.stringify(r, (k, v) => typeof v === 'bigint' ? v.toString() : v, 2)))"
+        run: node scripts/sweep-bonded.mjs
