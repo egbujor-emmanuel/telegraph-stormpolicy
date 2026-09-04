@@ -1,8 +1,115 @@
 {
-  "sweptAt": "2026-09-04T18:22:57.937Z",
-  "citiesAssessed": 0,
+  "sweptAt": "2026-09-04T19:13:07.598Z",
+  "citiesAssessed": 12,
+  "unavailable": 13,
   "signalsFetched": 0,
   "triggered": 0,
+  "sweepError": null,
   "finalized": [],
-  "decisions": []
+  "decisions": [
+    {
+      "policyId": "5",
+      "location": "Cebu, Philippines",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "7",
+      "location": "Cebu, Philippines",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "9",
+      "location": "Dhaka, Bangladesh",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "11",
+      "location": "Ho Chi Minh City, Vietnam",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "12",
+      "location": "Kolkata, India",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "13",
+      "location": "Mumbai, India",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "14",
+      "location": "Okinawa, Japan",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "15",
+      "location": "Hong Kong",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "16",
+      "location": "Miami, Florida",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "17",
+      "location": "New Orleans, Louisiana",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "18",
+      "location": "Darwin, Australia",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "19",
+      "location": "Reykjavik, Iceland",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    },
+    {
+      "policyId": "20",
+      "location": "Manila, Philippines",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "txHash": null
+    }
+  ]
 }
