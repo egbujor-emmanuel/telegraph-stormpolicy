@@ -1,6 +1,26 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { sweepBonded } from '../src/bonded-monitor.mjs';
+import { assessStormRisk } from '../src/decision-engine.mjs';
+
+// Cities the agent watches without holding cover on them. Someone opening
+// the site should be able to look up somewhere they recognise rather than
+// only the places that happen to have a policy -- and the answer has to be
+// a real assessment, not a mock, so the agent runs them on every sweep.
+const WATCHLIST = [
+  'Tokyo, Japan',
+  'Osaka, Japan',
+  'Shanghai, China',
+  'Bangkok, Thailand',
+  'Singapore',
+  'Chennai, India',
+  'Houston, Texas',
+  'Havana, Cuba',
+  'Lagos, Nigeria',
+  'Sydney, Australia',
+  'Auckland, New Zealand',
+  'Lisbon, Portugal',
+];
 
 // Finalize anything whose dispute window has closed unchallenged, then stake
 // a bonded assertion for any active policy whose live signals corroborate.
@@ -34,22 +54,48 @@ const decisions = (result.asserted ?? []).map(entry => ({
   txHash: entry.txHash ?? null,
 }));
 
+// Watchlist assessments are read-only: no bond, no transaction, nothing
+// on-chain. A failure on one city must not cost the others.
+const watchlist = [];
+for (const city of WATCHLIST) {
+  try {
+    const d = await assessStormRisk(city);
+    watchlist.push({
+      location: city,
+      triggered: d.shouldTrigger,
+      unavailable: false,
+      reason: d.reason,
+    });
+    console.log(`[watch] ${city}: ${d.shouldTrigger ? 'WOULD TRIGGER' : 'hold'}`);
+  } catch (err) {
+    watchlist.push({
+      location: city,
+      triggered: false,
+      unavailable: true,
+      reason: 'Signals unavailable this run — will be re-checked next sweep.',
+    });
+    console.error(`[watch] ${city} failed: ${err.message.slice(0, 90)}`);
+  }
+}
+
 const summary = {
   sweptAt: new Date().toISOString(),
   citiesAssessed: new Set(decisions.map(d => d.location).filter(Boolean)).size,
   unavailable: decisions.filter(d => d.unavailable).length,
   // Each policy costs one WEATHER_FORECAST and one STORM_ALERT, both
   // auto-routed and paid through x402.
-  signalsFetched: decisions.filter(d => !d.unavailable).length * 2,
+  signalsFetched: (decisions.filter(d => !d.unavailable).length
+    + watchlist.filter(w => !w.unavailable).length) * 2,
   triggered: decisions.filter(d => d.triggered).length,
   sweepError,
   finalized: (result.finalized ?? [])
     .filter(f => !f.error)
     .map(f => ({ policyId: String(f.policyId), txHash: f.txHash ?? null })),
   decisions,
+  watchlist,
 };
 
 const out = path.resolve('public/data/latest-sweep.json');
 fs.mkdirSync(path.dirname(out), { recursive: true });
 fs.writeFileSync(out, JSON.stringify(summary, null, 2) + '\n');
-console.log(`\nwrote ${out} — ${decisions.length} decisions across ${summary.citiesAssessed} cities`);
+console.log(`\nwrote ${out} — ${decisions.length} covered + ${watchlist.length} watched, ${summary.signalsFetched} signals`);

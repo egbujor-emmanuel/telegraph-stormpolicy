@@ -481,9 +481,34 @@ setInterval(loadPolicies, 30000);
 // Read from a file the monitor commits after each run, so the page can show
 // the agent's reasoning -- including the holds, which never reach the chain
 // and are most of what it actually does.
+let sweepRows = [];
+
+function renderSweep(filter = '') {
+  const rows = document.getElementById('sweep-rows');
+  const q = filter.trim().toLowerCase();
+  const shown = q
+    ? sweepRows.filter(d => (d.location ?? '').toLowerCase().includes(q))
+    : sweepRows;
+
+  if (!shown.length) {
+    rows.innerHTML = q
+      ? `<div class="empty">No assessment for "${filter.replace(/</g, '&lt;')}" in the last sweep. The agent covers the cities listed above; anywhere else can be added by creating a policy for it.</div>`
+      : '<div class="empty">No decisions in the last sweep.</div>';
+    return;
+  }
+
+  rows.innerHTML = shown.map(d => `
+    <div class="sweep-row${d.triggered ? ' fired' : d.unavailable ? ' waiting' : ''}">
+      <span class="sweep-verdict">${d.triggered ? 'Paid' : d.unavailable ? 'No signal' : 'Hold'}</span>
+      <div class="sweep-body">
+        <span class="sweep-city">${d.location ?? 'policy #' + d.policyId}${d.watched ? '<span class="sweep-tag">watching</span>' : ''}</span>
+        <span class="sweep-reason">${(d.reason ?? '').replace(/</g, '&lt;')}</span>
+      </div>
+    </div>`).join('');
+}
+
 async function loadLatestSweep() {
   const meta = document.getElementById('sweep-meta');
-  const rows = document.getElementById('sweep-rows');
   try {
     const res = await fetch(`data/latest-sweep.json?t=${Date.now()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -492,30 +517,29 @@ async function loadLatestSweep() {
     const when = new Date(sweep.sweptAt);
     const minsAgo = Math.max(0, Math.round((Date.now() - when.getTime()) / 60000));
     const ago = minsAgo < 60 ? `${minsAgo} min ago` : `${Math.round(minsAgo / 60)} h ago`;
-    const bits = [`${ago}`, `${sweep.citiesAssessed} cities assessed`];
+
+    // Covered policies first, then the watchlist the agent assesses without
+    // holding cover -- both are real assessments, and the label says which.
+    const covered = (sweep.decisions ?? []).map(d => ({ ...d, watched: false }));
+    const watched = (sweep.watchlist ?? []).map(d => ({ ...d, watched: true }));
+    sweepRows = [...covered, ...watched];
+
+    const bits = [ago, `${sweepRows.length} cities assessed`];
     if (sweep.signalsFetched) bits.push(`${sweep.signalsFetched} live Telegraph signals`);
-    bits.push(`${sweep.triggered} triggered`);
-    if (sweep.unavailable) bits.push(`${sweep.unavailable} awaiting signal`);
+    bits.push(`${sweepRows.filter(d => d.triggered).length} triggered`);
+    const missing = sweepRows.filter(d => d.unavailable).length;
+    if (missing) bits.push(`${missing} awaiting signal`);
     meta.textContent = bits.join(' · ');
 
-    if (!sweep.decisions?.length) {
-      rows.innerHTML = '<div class="empty">No decisions in the last sweep.</div>';
-      return;
-    }
-    rows.innerHTML = sweep.decisions.map(d => `
-      <div class="sweep-row${d.triggered ? ' fired' : d.unavailable ? ' waiting' : ''}">
-        <span class="sweep-verdict">${d.triggered ? 'Paid' : d.unavailable ? 'No signal' : 'Hold'}</span>
-        <div class="sweep-body">
-          <span class="sweep-city">${d.location ?? 'policy #' + d.policyId}</span>
-          <span class="sweep-reason">${(d.reason ?? '').replace(/</g, '&lt;')}</span>
-        </div>
-      </div>`).join('');
+    renderSweep(document.getElementById('sweep-search').value);
   } catch {
     // The file only appears after the agent's first publishing run.
     meta.textContent = 'The next scheduled sweep will publish its decisions here.';
-    rows.innerHTML = '';
+    document.getElementById('sweep-rows').innerHTML = '';
   }
 }
+
+document.getElementById('sweep-search').addEventListener('input', (e) => renderSweep(e.target.value));
 
 loadLatestSweep();
 setInterval(loadLatestSweep, 120000);

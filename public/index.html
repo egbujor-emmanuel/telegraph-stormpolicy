@@ -212,10 +212,11 @@ Value conservation checked exactly, including the OP-stack L1 data fee.</pre>
   <section id="live" class="panel reveal">
     <div class="panel-head">
       <h2>What the agent decided, last run</h2>
-      <p class="panel-desc">The agent sweeps every covered city on a schedule, whether or not anyone is watching. This is its own reasoning from the most recent pass &mdash; mostly holds, which is the point: it only moves money when two independent signals agree.</p>
+      <p class="panel-desc">The agent sweeps every covered city on a schedule, whether or not anyone is watching, and also assesses a watchlist it holds no cover on so you can look up somewhere you recognise. This is its own reasoning from the most recent pass &mdash; mostly holds, which is the point: it only moves money when two independent signals agree.</p>
     </div>
     <div class="panel-body">
       <div class="sweep-meta" id="sweep-meta">Loading the latest sweep&hellip;</div>
+      <input id="sweep-search" class="sweep-search" placeholder="Look up a city — Tokyo, Manila, Houston&hellip;" />
       <div class="sweep-rows" id="sweep-rows"></div>
     </div>
   </section>
