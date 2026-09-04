@@ -33,10 +33,13 @@ pragma solidity ^0.8.24;
 ///     shipping a from-scratch decentralized court. The difference here is
 ///     that the fallback is wired through a real bond/slash economic
 ///     mechanism instead of an ungated admin pause button.
-///   - The bond is a fixed amount set at deploy time, not scaled to each
-///     policy's payout size, and there is no automatic escalation or
-///     timeout if the arbiter never responds to a live dispute -- both are
-///     the natural next refinements, not shipped here.
+///   - There is no multi-round bond escalation. A dispute is one matched
+///     bond, then arbitration -- not Reality.eth's ladder.
+///
+/// Two things it does handle: the bond scales with the payout at stake
+/// rather than being flat (`requiredBond`), and a dispute the arbiter never
+/// answers can be unwound by anyone after a timeout (`resolveStale`), which
+/// returns both bonds rather than freezing them behind a silent arbiter.
 contract StormPolicyBonded {
     struct Policy {
         address funder;
@@ -61,6 +64,7 @@ contract StormPolicyBonded {
         uint256 disputeBond;
         address disputer;
         uint256 livenessEnds;
+        uint256 disputedAt;
         bytes32 forecastSignalHash;
         bytes32 alertSignalHash;
         uint256 forecastConfidenceBps;
@@ -70,8 +74,18 @@ contract StormPolicyBonded {
 
     address public immutable agent;
     address public arbiter;
-    uint256 public immutable agentBondAmount;
+    /// Bond floor, so a dust-sized policy still costs something to assert.
+    uint256 public immutable minBond;
+    /// Bond as a share of the payout, in basis points. Staking a flat amount
+    /// against every policy means the incentive to be careful shrinks as the
+    /// payout grows; scaling it keeps the agent's exposure proportional to
+    /// the money its claim moves.
+    uint256 public immutable bondBps;
     uint256 public immutable livenessPeriod;
+    /// How long a dispute may sit unresolved before anyone can unwind it.
+    /// Without this, an arbiter that simply never answers freezes both bonds
+    /// and the policy indefinitely.
+    uint256 public immutable arbiterTimeout;
 
     uint256 public nextPolicyId;
     mapping(uint256 => Policy) public policies;
@@ -106,6 +120,7 @@ contract StormPolicyBonded {
         uint256 payoutAmount
     );
     event DisputeResolved(uint256 indexed policyId, bool agentWasCorrect, address winner, uint256 slashedAmount);
+    event DisputeUnwound(uint256 indexed policyId, address disputer, uint256 refundedEach);
     event ArbiterUpdated(address indexed newArbiter);
 
     modifier onlyAgent() {
@@ -118,14 +133,32 @@ contract StormPolicyBonded {
         _;
     }
 
-    constructor(address _agent, address _arbiter, uint256 _agentBondAmount, uint256 _livenessPeriod) {
+    constructor(
+        address _agent,
+        address _arbiter,
+        uint256 _minBond,
+        uint256 _bondBps,
+        uint256 _livenessPeriod,
+        uint256 _arbiterTimeout
+    ) {
         require(_agent != address(0), "agent required");
         require(_arbiter != address(0), "arbiter required");
         require(_livenessPeriod > 0, "liveness required");
+        require(_arbiterTimeout > _livenessPeriod, "timeout must exceed liveness");
+        require(_bondBps <= 10000, "bondBps too high");
         agent = _agent;
         arbiter = _arbiter;
-        agentBondAmount = _agentBondAmount;
+        minBond = _minBond;
+        bondBps = _bondBps;
         livenessPeriod = _livenessPeriod;
+        arbiterTimeout = _arbiterTimeout;
+    }
+
+    /// @notice The bond this policy requires to assert against: a share of
+    /// what the claim would pay out, never below the floor.
+    function requiredBond(uint256 policyId) public view returns (uint256) {
+        uint256 scaled = (policies[policyId].payoutAmount * bondBps) / 10000;
+        return scaled < minBond ? minBond : scaled;
     }
 
     /// @notice Fund and register a new parametric storm policy.
@@ -185,7 +218,7 @@ contract StormPolicyBonded {
         require(p.active, "not active");
         require(!p.triggered, "already triggered");
         require(assertions[policyId].state == AssertionState.None, "already asserted");
-        require(msg.value == agentBondAmount, "wrong bond amount");
+        require(msg.value == requiredBond(policyId), "wrong bond amount");
 
         uint256 livenessEnds = block.timestamp + livenessPeriod;
         assertions[policyId] = Assertion({
@@ -194,6 +227,7 @@ contract StormPolicyBonded {
             disputeBond: 0,
             disputer: address(0),
             livenessEnds: livenessEnds,
+            disputedAt: 0,
             forecastSignalHash: forecastSignalHash,
             alertSignalHash: alertSignalHash,
             forecastConfidenceBps: forecastConfidenceBps,
@@ -225,6 +259,7 @@ contract StormPolicyBonded {
         a.state = AssertionState.Disputed;
         a.disputer = msg.sender;
         a.disputeBond = msg.value;
+        a.disputedAt = block.timestamp;
 
         emit TriggerDisputed(policyId, msg.sender, msg.value);
     }
@@ -305,6 +340,29 @@ contract StormPolicyBonded {
             (bool ok, ) = disputer.call{value: totalBonds}("");
             require(ok, "slash payout failed");
         }
+    }
+
+    /// @notice Unwind a dispute the arbiter never answered. Callable by
+    /// anyone once the timeout has passed, so neither side's bond can be
+    /// held hostage by an arbiter that goes silent. Both bonds are returned
+    /// and the assertion clears: nobody is punished for someone else's
+    /// inaction, and the policy is assertable again.
+    function resolveStale(uint256 policyId) external {
+        Assertion storage a = assertions[policyId];
+        require(a.state == AssertionState.Disputed, "not disputed");
+        require(block.timestamp >= a.disputedAt + arbiterTimeout, "arbiter still has time");
+
+        address disputer = a.disputer;
+        uint256 agentBond = a.bondAmount;
+        uint256 disputerBond = a.disputeBond;
+
+        delete assertions[policyId];
+        emit DisputeUnwound(policyId, disputer, agentBond);
+
+        (bool ok1, ) = agent.call{value: agentBond}("");
+        require(ok1, "agent refund failed");
+        (bool ok2, ) = disputer.call{value: disputerBond}("");
+        require(ok2, "disputer refund failed");
     }
 
     /// @notice The arbiter role can be handed off (e.g. to a multisig)

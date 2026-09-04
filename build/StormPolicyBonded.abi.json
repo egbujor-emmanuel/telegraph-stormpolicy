@@ -13,12 +13,22 @@
       },
       {
         "internalType": "uint256",
-        "name": "_agentBondAmount",
+        "name": "_minBond",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_bondBps",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
         "name": "_livenessPeriod",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_arbiterTimeout",
         "type": "uint256"
       }
     ],
@@ -67,6 +77,31 @@
       }
     ],
     "name": "DisputeResolved",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "policyId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "disputer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "refundedEach",
+        "type": "uint256"
+      }
+    ],
+    "name": "DisputeUnwound",
     "type": "event"
   },
   {
@@ -269,12 +304,12 @@
   },
   {
     "inputs": [],
-    "name": "agentBondAmount",
+    "name": "arbiter",
     "outputs": [
       {
-        "internalType": "uint256",
+        "internalType": "address",
         "name": "",
-        "type": "uint256"
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -282,12 +317,12 @@
   },
   {
     "inputs": [],
-    "name": "arbiter",
+    "name": "arbiterTimeout",
     "outputs": [
       {
-        "internalType": "address",
+        "internalType": "uint256",
         "name": "",
-        "type": "address"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -367,6 +402,11 @@
         "type": "uint256"
       },
       {
+        "internalType": "uint256",
+        "name": "disputedAt",
+        "type": "uint256"
+      },
+      {
         "internalType": "bytes32",
         "name": "forecastSignalHash",
         "type": "bytes32"
@@ -390,6 +430,19 @@
         "internalType": "string",
         "name": "reason",
         "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "bondBps",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -493,6 +546,11 @@
           {
             "internalType": "uint256",
             "name": "livenessEnds",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "disputedAt",
             "type": "uint256"
           },
           {
@@ -600,6 +658,19 @@
   },
   {
     "inputs": [],
+    "name": "minBond",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "nextPolicyId",
     "outputs": [
       {
@@ -666,6 +737,25 @@
         "internalType": "uint256",
         "name": "policyId",
         "type": "uint256"
+      }
+    ],
+    "name": "requiredBond",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "policyId",
+        "type": "uint256"
       },
       {
         "internalType": "bool",
@@ -674,6 +764,19 @@
       }
     ],
     "name": "resolveDispute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "policyId",
+        "type": "uint256"
+      }
+    ],
+    "name": "resolveStale",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

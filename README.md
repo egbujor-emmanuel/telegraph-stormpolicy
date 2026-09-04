@@ -64,7 +64,20 @@ The same pipeline is exposed as an MCP server (`mcp/server.mjs`) so any MCP-spea
 | `check_policy` | Assess and, if warranted, trigger one policy by ID |
 | `sweep_all_policies` | Check every active policy — the persistent-monitoring entry point |
 
-Verified against the real MCP protocol with `npm run test:mcp`, which spawns the server over stdio with the official SDK's `Client`/`StdioClientTransport` (the same transport any MCP host uses) and calls a live tool — this is the run that first caught the Jakarta/"South China Sea" entity-binding mismatch, unscripted. To point Claude Desktop at it, add to `claude_desktop_config.json`:
+**Connected to a real agent runtime, not just documented.** The server is registered with Claude Code — itself an MCP host — and reports healthy from the host's own health check:
+
+```
+$ claude mcp list
+stormpolicy: node .../mcp/server.mjs - ✔ Connected
+```
+
+Add it to any MCP host the same way:
+
+```bash
+claude mcp add stormpolicy -- node /absolute/path/to/telegraph-stormpolicy/mcp/server.mjs
+```
+
+It is also verified against the raw protocol with `npm run test:mcp`, which spawns the server over stdio using the official SDK's `Client`/`StdioClientTransport` (the same transport any MCP host uses) and calls a live tool — this is the run that first caught the Jakarta/"South China Sea" entity-binding mismatch, unscripted. For Claude Desktop, the equivalent entry in `claude_desktop_config.json` is:
 
 ```json
 {
@@ -108,14 +121,14 @@ Requires `TEST_WALLET_PRIVATE_KEY` (funded with Base Sepolia ETH for gas and USD
 
 The first version of this README listed a bond/slashing mechanism as the obvious next step and deliberately left it out. It's now built, deployed, and tested.
 
-**[`StormPolicyBonded.sol`](contracts/StormPolicyBonded.sol)** — [`0xE3ED291780d967dB04396f4d7b9f4b18c860c68f`](https://sepolia.basescan.org/address/0xE3ED291780d967dB04396f4d7b9f4b18c860c68f) on Base Sepolia.
+**[`StormPolicyBonded.sol`](contracts/StormPolicyBonded.sol)** — [`0xECb611641342A0EF514B1D4e425b51dF0bf4f9bE`](https://sepolia.basescan.org/address/0xECb611641342A0EF514B1D4e425b51dF0bf4f9bE) on Base Sepolia.
 
 Instead of the agent paying out directly, it now has to put money behind its claim:
 
 1. **Assert.** The agent stakes a bond and asserts a policy should trigger, with the same evidence trail attached. No funds move yet.
 2. **Dispute window.** For the liveness period that follows, anyone can dispute by matching the bond.
 3. **Finalize.** If nobody disputes, *anyone* can finalize — the payout releases and the bond returns. This is the expected common case.
-4. **Arbitrate.** If disputed, an arbiter rules. The loser's bond goes to the winner. If the agent was wrong, the payout never happens and the policy stays open.
+4. **Arbitrate.** If disputed, an arbiter rules. The loser's bond goes to the winner. If the agent was wrong, the payout never happens and the assertion is cleared — cover has to survive being wrong once, since the storm the agent was wrong about may still arrive, so the policy returns to an assertable state rather than sitting funded but unusable.
 
 So a dishonest or sloppy trigger stops being free: asserting something false costs the agent its bond, and catching a false assertion pays the person who caught it.
 
@@ -126,8 +139,14 @@ This follows [UMA's Optimistic Oracle](https://docs.uma.xyz/protocol-overview/ho
 ### What is still simplified, honestly
 
 - **A single trusted arbiter, not a decentralized court.** UMA escalates to its DVM (a token-holder commit-reveal vote); Reality.eth escalates bonds across multiple rounds before falling back to an arbitrator contract. Both are substantial systems in their own right. This contract goes straight from "disputed" to one arbiter address, which is a real centralization point. Notably, production parametric insurers ([Arbol](https://www.arbol.io/post/smart-contracts-and-blockchain-can-help-close-the-global-protection-gap-enable-businesses-to-build-climate-resilience), Etherisc) make the same trade today — a trusted party as the oracle-dispute fallback. The difference here is that it's wired through a real bond/slash mechanism rather than an unaccountable admin pause. The role can be handed to a multisig via `updateArbiter` without redeploying.
-- **Fixed bond size**, set at deploy time, not scaled to each policy's payout.
-- **No timeout if the arbiter goes silent** on a live dispute.
+- **No multi-round bond escalation.** A dispute is one matched bond and then arbitration, not Reality.eth's ladder of doubling stakes.
+
+### What the earlier version left open, now closed
+
+Two limitations listed here previously have been implemented rather than left as future work:
+
+- **The bond scales with the payout.** A flat bond means the incentive to be careful shrinks as the payout grows. `requiredBond(policyId)` is `max(minBond, payout × bondBps)` — 20% of the money the claim would move, with a floor so dust-sized policies still cost something to assert. Asserting with the old flat amount on a large policy now reverts.
+- **A silent arbiter can no longer freeze funds.** `resolveStale(policyId)` lets *anyone* unwind a dispute the arbiter never answered, once the timeout has passed. Both bonds are returned and the assertion clears: neither side is punished for a third party's inaction, and the policy is assertable again. Verified by a test that deliberately never rules and waits out the real on-chain timeout.
 
 ### Verified
 

@@ -11,7 +11,14 @@ const CHAIN_ID = 84532;
 // production would likely use something closer to UMA's 2h-2day default,
 // scaled to how much value a single assertion moves.
 const LIVENESS_SECONDS = 180;
-const AGENT_BOND_WEI = ethers.parseEther('0.000003');
+// A dispute nobody arbitrates can be unwound after this, returning both
+// bonds. Kept short here so the behaviour is demonstrable; a production
+// deployment would allow an arbiter days, not minutes.
+const ARBITER_TIMEOUT_SECONDS = 240;
+// Bond floor, plus the share of each payout the agent must stake behind a
+// claim. 20% keeps the agent's exposure proportional to the money it moves.
+const MIN_BOND_WEI = ethers.parseEther('0.000003');
+const BOND_BPS = 2000n;
 
 const abi = JSON.parse(fs.readFileSync('./build/StormPolicyBonded.abi.json', 'utf8'));
 const bytecode = '0x' + fs.readFileSync('./build/StormPolicyBonded.bytecode.txt', 'utf8').trim();
@@ -37,7 +44,14 @@ const bytecode = '0x' + fs.readFileSync('./build/StormPolicyBonded.bytecode.txt'
 
   const factory = new ethers.ContractFactory(abi, bytecode, wallet);
   console.log('\ndeploying StormPolicyBonded...');
-  const contract = await factory.deploy(wallet.address, arbiterWallet.address, AGENT_BOND_WEI, LIVENESS_SECONDS);
+  const contract = await factory.deploy(
+    wallet.address,
+    arbiterWallet.address,
+    MIN_BOND_WEI,
+    BOND_BPS,
+    LIVENESS_SECONDS,
+    ARBITER_TIMEOUT_SECONDS,
+  );
   const deployTx = contract.deploymentTransaction();
   console.log('deploy tx hash:', deployTx.hash);
   await contract.waitForDeployment();
@@ -52,7 +66,7 @@ const bytecode = '0x' + fs.readFileSync('./build/StormPolicyBonded.bytecode.txt'
   console.log('\nfunding arbiter and disputer wallets for gas...');
   let tx = await wallet.sendTransaction({ to: arbiterWallet.address, value: ethers.parseEther('0.00005') });
   await tx.wait();
-  tx = await wallet.sendTransaction({ to: disputerWallet.address, value: ethers.parseEther('0.00005') + AGENT_BOND_WEI * 3n });
+  tx = await wallet.sendTransaction({ to: disputerWallet.address, value: ethers.parseEther('0.00005') + MIN_BOND_WEI * 6n });
   await tx.wait();
   console.log('funded.');
 
@@ -61,7 +75,9 @@ const bytecode = '0x' + fs.readFileSync('./build/StormPolicyBonded.bytecode.txt'
     agent: wallet.address,
     arbiter: arbiterWallet.address,
     disputer: disputerWallet.address,
-    agentBondWei: AGENT_BOND_WEI.toString(),
+    minBondWei: MIN_BOND_WEI.toString(),
+    bondBps: Number(BOND_BPS),
+    arbiterTimeoutSeconds: ARBITER_TIMEOUT_SECONDS,
     livenessSeconds: LIVENESS_SECONDS,
     deployTxHash: deployTx.hash,
     blockNumber: receipt.blockNumber,

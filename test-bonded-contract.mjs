@@ -10,9 +10,12 @@ const abi = JSON.parse(fs.readFileSync('./build/StormPolicyBonded.abi.json', 'ut
 const deployment = JSON.parse(fs.readFileSync('./build/deployment-bonded.json', 'utf8'));
 const keys = JSON.parse(fs.readFileSync('./.bonded-test-keys.json', 'utf8'));
 
-const { address, agentBondWei, livenessSeconds } = deployment;
-const BOND = BigInt(agentBondWei);
+const { address, minBondWei, bondBps, livenessSeconds, arbiterTimeoutSeconds } = deployment;
 const PAYOUT = ethers.parseEther('0.000005');
+// Mirror the contract's own rule rather than hardcoding a figure, so the
+// suite stays correct if the deployment parameters change.
+const scaled = (PAYOUT * BigInt(bondBps)) / 10000n;
+const BOND = scaled < BigInt(minBondWei) ? BigInt(minBondWei) : scaled;
 
 const FORECAST_HASH = ethers.keccak256(ethers.toUtf8Bytes('forecast-signal-test'));
 const ALERT_HASH = ethers.keccak256(ethers.toUtf8Bytes('alert-signal-test'));
@@ -82,13 +85,19 @@ async function createPolicy(contract, beneficiary, location) {
             try {
               return await original.apply(target, args);
             } catch (err) {
+              // NonceManager increments optimistically, so a send that fails
+              // -- including the deliberate reverts in the guard tests --
+              // leaves a gap. The next transaction would then wait forever
+              // on a nonce that never arrives. Re-sync after every failure,
+              // not just the ones worth retrying.
+              managed.reset();
+
               const message = String(err?.message ?? '');
               const nonceClash = err?.code === 'NONCE_EXPIRED'
                 || message.includes('nonce too low')
                 || message.includes('nonce has already been used')
                 || message.includes('replacement transaction underpriced');
               if (!nonceClash || attempt >= 5) throw err;
-              managed.reset();
               await new Promise(r => setTimeout(r, 1500 * attempt));
             }
           }
@@ -105,7 +114,7 @@ async function createPolicy(contract, beneficiary, location) {
   console.log('agent:   ', agent.address);
   console.log('arbiter: ', arbiter.address, '(on-chain:', await asAgent.arbiter() + ')');
   console.log('disputer:', disputer.address);
-  console.log('bond:', ethers.formatEther(BOND), 'ETH   liveness:', livenessSeconds, 's   payout:', ethers.formatEther(PAYOUT), 'ETH');
+  console.log('bond:', ethers.formatEther(BOND), 'ETH   liveness:', livenessSeconds, 's   arbiter timeout:', arbiterTimeoutSeconds, 's   payout:', ethers.formatEther(PAYOUT), 'ETH');
 
   // ─────────────────────────────────────────────────────────────────────
   console.log('\n=== TEST 1: disputed, arbiter rules agent WAS RIGHT ===');
@@ -271,6 +280,77 @@ async function createPolicy(contract, beneficiary, location) {
     check('agent bond returned in full', agentAfter - agentBefore === BOND, '+' + ethers.formatEther(agentAfter - agentBefore) + ' ETH');
     check('finalize was permissionless (called by non-agent)', true);
     console.log('  finalize tx:', ftx.hash);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  console.log('\n=== TEST 5: the bond scales with the payout at stake ===');
+  {
+    // A flat bond means the incentive to be careful shrinks as the payout
+    // grows. These two policies differ only in size, so the bond must too.
+    const small = await createPolicy(asAgent, ethers.Wallet.createRandom().address, 'Cebu, Philippines');
+    const bigPayout = ethers.parseEther('0.0001'); // 20x the standard test payout
+    const btx = await asAgent.createPolicy(ethers.Wallet.createRandom().address, 'Taipei, Taiwan', { value: bigPayout });
+    const breceipt = await btx.wait();
+    const big = breceipt.logs
+      .map(l => { try { return asAgent.interface.parseLog(l); } catch { return null; } })
+      .find(l => l && l.name === 'PolicyCreated').args.policyId;
+
+    const smallBond = await asAgent.requiredBond(small);
+    const bigBond = await asAgent.requiredBond(big);
+    const expectedBig = (bigPayout * BigInt(bondBps)) / 10000n;
+
+    check('small policy takes the bond floor', smallBond === BigInt(minBondWei),
+      ethers.formatEther(smallBond) + ' ETH');
+    check('large policy bond scales with its payout', bigBond === expectedBig,
+      ethers.formatEther(bigBond) + ' ETH on a ' + ethers.formatEther(bigPayout) + ' ETH payout');
+    check('a larger payout demands a larger bond', bigBond > smallBond);
+
+    await expectRevert('asserting with the old flat bond now reverts', () =>
+      asAgent.assertTrigger(big, FORECAST_HASH, ALERT_HASH, 9000, 9000, 'underfunded bond', { value: smallBond }));
+
+    const otx = await asAgent.assertTrigger(big, FORECAST_HASH, ALERT_HASH, 9000, 9000, 'correctly scaled bond', { value: bigBond });
+    await otx.wait();
+    check('asserting with the scaled bond succeeds', Number((await asAgent.getAssertion(big)).state) === 1);
+  }
+
+  // ─────────────────────────────────────────────────────────────────────
+  console.log('\n=== TEST 6: a dispute the arbiter never answers can be unwound ===');
+  {
+    const beneficiary = ethers.Wallet.createRandom().address;
+    const id = await createPolicy(asAgent, beneficiary, 'Dhaka, Bangladesh');
+    console.log('  policy', id.toString(), 'created');
+
+    let tx = await asAgent.assertTrigger(id, FORECAST_HASH, ALERT_HASH, 9000, 9000, 'assertion that will be disputed and abandoned', { value: BOND });
+    await tx.wait();
+    tx = await asDisputer.dispute(id, { value: BOND });
+    await tx.wait();
+    check('assertion is Disputed', Number((await asAgent.getAssertion(id)).state) === 2);
+
+    await expectRevert('cannot unwind before the arbiter timeout', () => asAgent.resolveStale(id));
+
+    // The arbiter deliberately never rules here.
+    console.log(`  waiting ${arbiterTimeoutSeconds}s for the arbiter timeout to pass...`);
+    await new Promise(r => setTimeout(r, (arbiterTimeoutSeconds + 15) * 1000));
+
+    const agentBefore = await provider.getBalance(agent.address);
+    // Called by the disputer to show it is permissionless, not an agent power.
+    const stx = await asDisputer.resolveStale(id);
+    const sreceipt = await stx.wait();
+
+    const agentAfter = await provider.getBalance(agent.address);
+    const disputerRefund =
+      (await provider.getBalance(disputer.address, sreceipt.blockNumber))
+      - (await provider.getBalance(disputer.address, sreceipt.blockNumber - 1));
+    const p = await asAgent.getPolicy(id);
+
+    check('agent bond refunded in full', agentAfter - agentBefore === BOND, '+' + ethers.formatEther(agentAfter - agentBefore) + ' ETH');
+    check('disputer bond refunded in full', disputerRefund + (await txCost(provider, stx.hash)) === BOND,
+      '+' + ethers.formatEther(disputerRefund) + ' ETH net of their own gas');
+    check('nobody was slashed for the arbiter going silent', true);
+    check('beneficiary received nothing', (await provider.getBalance(beneficiary)) === 0n);
+    check('policy still active and assertable again', p.active === true && p.triggered === false
+      && Number((await asAgent.getAssertion(id)).state) === 0);
+    check('unwinding was permissionless (called by the disputer)', true);
   }
 
   console.log(`\n${'='.repeat(60)}`);

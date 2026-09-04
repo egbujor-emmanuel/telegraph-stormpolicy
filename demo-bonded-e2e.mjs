@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 config({ quiet: true });
 import { ethers } from 'ethers';
-import { getBondedContract, LIVENESS_SECONDS, BONDED_ADDRESS, ARBITER_ADDRESS, AGENT_BOND_WEI } from './src/bonded-client.mjs';
+import { getBondedContract, LIVENESS_SECONDS, BONDED_ADDRESS, ARBITER_ADDRESS, MIN_BOND_WEI, BOND_BPS } from './src/bonded-client.mjs';
 import { sweepBonded, finalizeMatured } from './src/bonded-monitor.mjs';
 
 const LOCATION = process.argv[2] || 'Manila, Philippines';
@@ -14,7 +14,7 @@ const PAYOUT = ethers.parseEther('0.000005');
   console.log('contract:', BONDED_ADDRESS);
   console.log('agent:   ', wallet.address);
   console.log('arbiter: ', ARBITER_ADDRESS);
-  console.log('bond:', ethers.formatEther(AGENT_BOND_WEI), 'ETH   liveness:', LIVENESS_SECONDS, 's');
+  console.log('bond: max(' + ethers.formatEther(MIN_BOND_WEI) + ' ETH, ' + (Number(BOND_BPS) / 100) + '% of payout)   liveness:', LIVENESS_SECONDS, 's');
   console.log('location:', LOCATION);
 
   console.log('\n--- creating policy ---');

@@ -16,8 +16,14 @@ const deployment = JSON.parse(fs.readFileSync(path.join(ROOT, 'build/deployment-
 
 export const BONDED_ADDRESS = deployment.address;
 export const BONDED_DEPLOY_BLOCK = deployment.blockNumber;
-export const AGENT_BOND_WEI = BigInt(deployment.agentBondWei);
+// The bond is no longer flat: it scales with the payout a claim would move,
+// never falling below the floor. Ask the contract for a given policy's
+// figure rather than assuming one, so callers cannot drift from on-chain
+// truth if the deployment parameters change.
+export const MIN_BOND_WEI = BigInt(deployment.minBondWei);
+export const BOND_BPS = BigInt(deployment.bondBps);
 export const LIVENESS_SECONDS = deployment.livenessSeconds;
+export const ARBITER_TIMEOUT_SECONDS = deployment.arbiterTimeoutSeconds;
 export const ARBITER_ADDRESS = deployment.arbiter;
 
 /// Assertion.state values, matching the contract's enum ordering.

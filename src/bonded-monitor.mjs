@@ -1,5 +1,5 @@
 import { assessStormRisk } from './decision-engine.mjs';
-import { getBondedContract, AssertionState, AGENT_BOND_WEI } from './bonded-client.mjs';
+import { getBondedContract, AssertionState } from './bonded-client.mjs';
 
 /// Checks one policy against live Telegraph signals and, if the
 /// cross-corroborated decision says trigger, stakes the agent's bond behind
@@ -26,6 +26,9 @@ export async function assertPolicyIfTriggered(policyId) {
     return { policyId, asserted: false, reason: decision.reason, decision };
   }
 
+  // The bond scales with this policy's payout, so read it from the
+  // contract rather than assuming a flat figure.
+  const bond = await contract.requiredBond(policyId);
   const tx = await contract.assertTrigger(
     policyId,
     decision.forecastSignalHash,
@@ -33,9 +36,9 @@ export async function assertPolicyIfTriggered(policyId) {
     decision.forecastConfidenceBps,
     decision.alertConfidenceBps,
     decision.reason.slice(0, 500),
-    { value: AGENT_BOND_WEI },
+    { value: bond },
   );
-  console.log(`[policy ${policyId}] assertTrigger tx: ${tx.hash} (bond staked)`);
+  console.log(`[policy ${policyId}] assertTrigger tx: ${tx.hash} (bond staked: ${bond} wei)`);
   const receipt = await tx.wait();
   console.log(`[policy ${policyId}] confirmed in block ${receipt.blockNumber}`);
 

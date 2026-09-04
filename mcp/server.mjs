@@ -8,7 +8,8 @@ import { assessStormRisk } from '../src/decision-engine.mjs';
 import {
   getBondedContract,
   BONDED_ADDRESS,
-  AGENT_BOND_WEI,
+  MIN_BOND_WEI,
+  BOND_BPS,
   LIVENESS_SECONDS,
   ARBITER_ADDRESS,
   AssertionState,
@@ -41,8 +42,9 @@ server.registerTool(
     const log = receipt.logs
       .map((l) => { try { return contract.interface.parseLog(l); } catch { return null; } })
       .find((l) => l && l.name === 'PolicyCreated');
+    const newPolicyId = log.args.policyId;
     const result = {
-      policyId: log.args.policyId.toString(),
+      policyId: newPolicyId.toString(),
       contract: CONTRACT_ADDRESS,
       txHash: tx.hash,
       blockNumber: receipt.blockNumber,
@@ -159,15 +161,16 @@ server.registerTool(
     const log = receipt.logs
       .map((l) => { try { return contract.interface.parseLog(l); } catch { return null; } })
       .find((l) => l && l.name === 'PolicyCreated');
+    const newPolicyId = log.args.policyId;
     const result = {
-      policyId: log.args.policyId.toString(),
+      policyId: newPolicyId.toString(),
       contract: BONDED_ADDRESS,
       txHash: tx.hash,
       blockNumber: receipt.blockNumber,
       beneficiary,
       location,
       payoutEth,
-      bondEth: ethers.formatEther(AGENT_BOND_WEI),
+      bondEth: ethers.formatEther(await contract.requiredBond(newPolicyId)),
       livenessSeconds: LIVENESS_SECONDS,
       arbiter: ARBITER_ADDRESS,
     };
@@ -189,6 +192,7 @@ server.registerTool(
     },
   },
   async ({ policyId }) => {
+    const { contract } = getBondedContract();
     const result = await assertPolicyIfTriggered(BigInt(policyId));
     const out = {
       policyId: result.policyId?.toString?.() ?? policyId,
@@ -196,7 +200,7 @@ server.registerTool(
       skipped: !!result.skipped,
       txHash: result.txHash,
       blockNumber: result.blockNumber,
-      bondEth: ethers.formatEther(AGENT_BOND_WEI),
+      bondEth: ethers.formatEther(await contract.requiredBond(BigInt(policyId))),
       reason: result.decision?.reason || result.reason,
     };
     return { content: [{ type: 'text', text: JSON.stringify(out, null, 2) }] };

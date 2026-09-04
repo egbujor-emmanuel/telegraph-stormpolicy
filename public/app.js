@@ -1,16 +1,17 @@
 // The bonded contract carries the standing book of cover and is what the
 // scheduled agent actually sweeps, so it is what this page reads.
-const CONTRACT_ADDRESS = '0x8a516282e299CdB8356f1493533F47fE03128A55';
+const CONTRACT_ADDRESS = '0xECb611641342A0EF514B1D4e425b51dF0bf4f9bE';
 const CHAIN_ID_HEX = '0x14a34'; // 84532 Base Sepolia
 const CHAIN_ID = 84532;
 const RPC_URL = 'https://base-sepolia-rpc.publicnode.com';
-const DEPLOY_BLOCK = 46345708;
+const DEPLOY_BLOCK = 46362557;
 const EXPLORER = 'https://sepolia.basescan.org';
 
 const ABI = [
   'function createPolicy(address beneficiary, string location) payable returns (uint256)',
   'function getPolicy(uint256) view returns (tuple(address funder, address beneficiary, string location, uint256 payoutAmount, bool active, bool triggered, uint256 createdAt))',
-  'function getAssertion(uint256) view returns (tuple(uint8 state, uint256 bondAmount, uint256 disputeBond, address disputer, uint256 livenessEnds, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason))',
+  'function getAssertion(uint256) view returns (tuple(uint8 state, uint256 bondAmount, uint256 disputeBond, address disputer, uint256 livenessEnds, uint256 disputedAt, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason))',
+  'function requiredBond(uint256) view returns (uint256)',
   'function nextPolicyId() view returns (uint256)',
   'event PolicyTriggered(uint256 indexed policyId, bytes32 forecastSignalHash, bytes32 alertSignalHash, uint256 forecastConfidenceBps, uint256 alertConfidenceBps, string reason, uint256 payoutAmount)',
 ];
