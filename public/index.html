@@ -24,6 +24,7 @@
       <a href="#mechanism">How it works</a>
       <a href="#signals">Signals</a>
       <a href="#bonded">Bonding</a>
+      <a href="#live">Live</a>
       <a href="#policies">Policies</a>
       <button id="connect-btn" class="btn btn-outline btn-sm">Connect Wallet</button>
     </div>
@@ -205,6 +206,17 @@ Value conservation checked exactly, including the OP-stack L1 data fee.</pre>
         <a href="https://sepolia.basescan.org/address/0xECb611641342A0EF514B1D4e425b51dF0bf4f9bE" target="_blank" class="mech-link">View the bonded contract on Basescan &rarr;</a>
       </div>
       <p class="panel-note">Modelled on UMA's Optimistic Oracle and Reality.eth. The arbiter is a single trusted address rather than a decentralized court &mdash; a real limitation, documented rather than papered over, and the same trade production parametric insurers make today.</p>
+    </div>
+  </section>
+
+  <section id="live" class="panel reveal">
+    <div class="panel-head">
+      <h2>What the agent decided, last run</h2>
+      <p class="panel-desc">The agent sweeps every covered city on a schedule, whether or not anyone is watching. This is its own reasoning from the most recent pass &mdash; mostly holds, which is the point: it only moves money when two independent signals agree.</p>
+    </div>
+    <div class="panel-body">
+      <div class="sweep-meta" id="sweep-meta">Loading the latest sweep&hellip;</div>
+      <div class="sweep-rows" id="sweep-rows"></div>
     </div>
   </section>
 

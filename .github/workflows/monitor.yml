@@ -8,6 +8,9 @@ on:
     - cron: '*/15 * * * *'
   workflow_dispatch: {} # manual "Run workflow" button for on-demand checks
 
+permissions:
+  contents: write
+
 jobs:
   sweep:
     runs-on: ubuntu-latest
@@ -32,3 +35,19 @@ jobs:
         env:
           TEST_WALLET_PRIVATE_KEY: ${{ secrets.TEST_WALLET_PRIVATE_KEY }}
         run: node scripts/sweep-bonded.mjs
+
+      # Publish the agent's own reasoning so the site can show it. Committing
+      # the summary is what makes each sweep visible to someone who never
+      # opens a block explorer.
+      - name: Publish the sweep summary
+        run: |
+          if git diff --quiet -- public/data/latest-sweep.json; then
+            echo "no change in sweep summary"
+            exit 0
+          fi
+          git config user.name  "stormpolicy-agent"
+          git config user.email "agent@users.noreply.github.com"
+          git add public/data/latest-sweep.json
+          git commit -m "Publish sweep $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --autostash origin main
+          git push

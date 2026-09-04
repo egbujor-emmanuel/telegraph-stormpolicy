@@ -23,7 +23,7 @@ export async function assertPolicyIfTriggered(policyId) {
   console.log(`[policy ${policyId}] decision: ${decision.shouldTrigger ? 'ASSERT' : 'HOLD'} -- ${decision.reason}`);
 
   if (!decision.shouldTrigger) {
-    return { policyId, asserted: false, reason: decision.reason, decision };
+    return { policyId, location: p.location, asserted: false, reason: decision.reason, decision };
   }
 
   // The bond scales with this policy's payout, so read it from the
@@ -42,7 +42,7 @@ export async function assertPolicyIfTriggered(policyId) {
   const receipt = await tx.wait();
   console.log(`[policy ${policyId}] confirmed in block ${receipt.blockNumber}`);
 
-  return { policyId, asserted: true, txHash: tx.hash, blockNumber: receipt.blockNumber, decision };
+  return { policyId, location: p.location, asserted: true, txHash: tx.hash, blockNumber: receipt.blockNumber, decision };
 }
 
 /// Finalizes any assertion whose dispute window has closed without challenge.
@@ -83,9 +83,18 @@ export async function sweepBonded() {
   const next = await contract.nextPolicyId();
   const asserted = [];
   for (let id = 0n; id < next; id++) {
-    const p = await contract.getPolicy(id);
-    if (!p.active) continue;
-    const a = await contract.getAssertion(id);
+    // Reading the chain can time out on a public RPC. That is a reason to
+    // skip one policy and carry on, not to lose the whole run.
+    let p, a;
+    try {
+      p = await contract.getPolicy(id);
+      if (!p.active) continue;
+      a = await contract.getAssertion(id);
+    } catch (err) {
+      console.error(`[policy ${id}] could not be read: ${err.shortMessage || err.message}`);
+      asserted.push({ policyId: id.toString(), error: err.shortMessage || err.message });
+      continue;
+    }
     if (Number(a.state) !== AssertionState.None) continue;
 
     // A transient Telegraph failure on one policy must not stop the others
@@ -94,7 +103,7 @@ export async function sweepBonded() {
       asserted.push(await assertPolicyIfTriggered(id));
     } catch (err) {
       console.error(`[policy ${id}] assessment failed: ${err.message}`);
-      asserted.push({ policyId: id.toString(), error: err.message });
+      asserted.push({ policyId: id.toString(), location: p.location, error: err.message });
     }
   }
   return { finalized, asserted };

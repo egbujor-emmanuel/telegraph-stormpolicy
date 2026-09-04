@@ -476,3 +476,46 @@ window.showEvidence = showEvidence;
 
 loadPolicies();
 setInterval(loadPolicies, 30000);
+
+// ── Latest sweep, published by the scheduled agent ──────────────────────
+// Read from a file the monitor commits after each run, so the page can show
+// the agent's reasoning -- including the holds, which never reach the chain
+// and are most of what it actually does.
+async function loadLatestSweep() {
+  const meta = document.getElementById('sweep-meta');
+  const rows = document.getElementById('sweep-rows');
+  try {
+    const res = await fetch(`data/latest-sweep.json?t=${Date.now()}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const sweep = await res.json();
+
+    const when = new Date(sweep.sweptAt);
+    const minsAgo = Math.max(0, Math.round((Date.now() - when.getTime()) / 60000));
+    const ago = minsAgo < 60 ? `${minsAgo} min ago` : `${Math.round(minsAgo / 60)} h ago`;
+    const bits = [`${ago}`, `${sweep.citiesAssessed} cities assessed`];
+    if (sweep.signalsFetched) bits.push(`${sweep.signalsFetched} live Telegraph signals`);
+    bits.push(`${sweep.triggered} triggered`);
+    if (sweep.unavailable) bits.push(`${sweep.unavailable} awaiting signal`);
+    meta.textContent = bits.join(' · ');
+
+    if (!sweep.decisions?.length) {
+      rows.innerHTML = '<div class="empty">No decisions in the last sweep.</div>';
+      return;
+    }
+    rows.innerHTML = sweep.decisions.map(d => `
+      <div class="sweep-row${d.triggered ? ' fired' : d.unavailable ? ' waiting' : ''}">
+        <span class="sweep-verdict">${d.triggered ? 'Paid' : d.unavailable ? 'No signal' : 'Hold'}</span>
+        <div class="sweep-body">
+          <span class="sweep-city">${d.location ?? 'policy #' + d.policyId}</span>
+          <span class="sweep-reason">${(d.reason ?? '').replace(/</g, '&lt;')}</span>
+        </div>
+      </div>`).join('');
+  } catch {
+    // The file only appears after the agent's first publishing run.
+    meta.textContent = 'The next scheduled sweep will publish its decisions here.';
+    rows.innerHTML = '';
+  }
+}
+
+loadLatestSweep();
+setInterval(loadLatestSweep, 120000);
