@@ -51,7 +51,7 @@ This project therefore treats parsing as an **adapter layer**, not field access:
 - when nothing usable is present the signal is `null` and the decision holds — it **fails closed, never open**;
 - readings parsed from prose are recorded as prose-derived, so weaker evidence is visible in the on-chain reason instead of silently ranking equal to structured fields.
 
-[73 conformance tests](test-regressions.mjs) pin these guarantees against captured live responses from every miner shape above, and run in CI on every push.
+[79 conformance tests](test-regressions.mjs) pin these guarantees against captured live responses from every miner shape above, and run in CI on every push.
 
 ## MCP tools
 
@@ -150,4 +150,4 @@ Two limitations listed here previously have been implemented rather than left as
 
 ### Verified
 
-`npm run test:bonded` — **25/25 passing** against the live contract on Base Sepolia, covering all three economic outcomes (undisputed finalize; disputed with the agent vindicated; disputed with the agent slashed) plus nine revert guards. Balance assertions account for the OP-stack L1 data fee, so value conservation is checked exactly rather than approximately.
+`npm run test:bonded` — **42/42 passing** against the live contract on Base Sepolia, covering all three economic outcomes (undisputed finalize; disputed with the agent vindicated; disputed with the agent slashed), the bond-scaling rule, a dispute deliberately left unanswered so the real on-chain arbiter timeout elapses, and nine revert guards. Balance assertions account for the OP-stack L1 data fee, so value conservation is checked exactly rather than approximately.
