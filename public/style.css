@@ -309,3 +309,9 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: #f7faf8; bor
   .pipe-merge { height: 28px; }
   .gate-val { text-align: left; }
 }
+
+.tag-test {
+  display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 400; vertical-align: middle;
+  background: rgba(139,152,143,0.12); color: var(--muted-2); border: 1px solid var(--border-soft);
+}

@@ -5,6 +5,9 @@ const CHAIN_ID_HEX = '0x14a34'; // 84532 Base Sepolia
 const CHAIN_ID = 84532;
 const RPC_URL = 'https://base-sepolia-rpc.publicnode.com';
 const DEPLOY_BLOCK = 46362557;
+// The agent that writes the standing book of cover, and the beneficiary it
+// names on those policies.
+const AGENT_ADDRESS = '0x98eC4d722048EB7cf6386c8F5C9757e9B0143F8c';
 const EXPLORER = 'https://sepolia.basescan.org';
 
 const ABI = [
@@ -179,6 +182,11 @@ async function loadPolicies() {
         active: p.active,
         triggered: p.triggered,
         assertionState: Number(a.state), // 0 none, 1 pending, 2 disputed, 3 resolved
+        // The standing book is written to the agent's own address; the
+        // contract test suite pays random throwaway addresses. Labelling the
+        // difference is more useful than hiding the test rows, and both are
+        // equally real on-chain.
+        fromTestSuite: p.beneficiary.toLowerCase() !== AGENT_ADDRESS.toLowerCase(),
       };
     })
   );
@@ -199,14 +207,24 @@ async function loadPolicies() {
     return;
   }
   empty.hidden = true;
-  container.innerHTML = policies.map(p => {
+  // Standing cover first, and within it the decisions that actually fired --
+  // so the first thing a visitor opens is a real trigger on live signals
+  // rather than a contract-test row.
+  const ordered = [...policies].sort((a, b) => {
+    if (a.fromTestSuite !== b.fromTestSuite) return a.fromTestSuite ? 1 : -1;
+    if (a.triggered !== b.triggered) return a.triggered ? -1 : 1;
+    return b.id - a.id;
+  });
+
+  container.innerHTML = ordered.map(p => {
     const action = p.triggered
       ? `<button class="btn btn-ghost btn-sm" onclick="showEvidence('${p.id}')">Evidence</button>`
       : '';
+    const origin = p.fromTestSuite ? '<span class="tag-test">contract test</span>' : '';
     return `
       <div class="policy-card">
         <div class="policy-main">
-          <div class="policy-location">${p.location}</div>
+          <div class="policy-location">${p.location} ${origin}</div>
           <div class="policy-sub">#${p.id} &middot; ${p.payoutEth} ETH &middot; ${p.beneficiary.slice(0,6)}...${p.beneficiary.slice(-4)}</div>
         </div>
         <div class="policy-right">
