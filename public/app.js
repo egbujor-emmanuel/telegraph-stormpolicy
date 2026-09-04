@@ -310,6 +310,13 @@ document.getElementById('create-btn').addEventListener('click', async () => {
 
   if (!signer) return fail('Connect a wallet first.');
   if (!location) return fail('Enter the location you want covered.');
+  // An unqualified place name resolves wherever the weather providers decide.
+  // A policy written as "Osaka" was assessed against somewhere calm while a
+  // real storm sat over Osaka, Japan -- and the location check cannot catch
+  // it, because the name it gets back matches the name that was asked for.
+  if (!location.includes(',') && location.trim().split(/\s+/).length < 2) {
+    return fail(`"${location}" is ambiguous — add the country or region, like "${location}, Japan". An unqualified name can resolve to a different place, and the policy would then never pay out for the one you meant.`);
+  }
   if (!payoutEth) return fail('Enter an amount to escrow, or pick one of the presets.');
   if (!beneficiary) return fail('Enter the address that should be paid.');
   if (!ethers.isAddress(beneficiary)) return fail('That beneficiary is not a valid address. It should look like 0x followed by 40 characters.');
@@ -486,9 +493,17 @@ let sweepRows = [];
 function renderSweep(filter = '') {
   const rows = document.getElementById('sweep-rows');
   const q = filter.trim().toLowerCase();
+  // Anything that fired goes first. Holds are the honest majority, but a
+  // wall of them buries the one city that actually triggered and makes a
+  // working agent look idle.
+  const ordered = [...sweepRows].sort((a, b) => {
+    if (a.triggered !== b.triggered) return a.triggered ? -1 : 1;
+    if (a.unavailable !== b.unavailable) return a.unavailable ? 1 : -1;
+    return 0;
+  });
   const shown = q
-    ? sweepRows.filter(d => (d.location ?? '').toLowerCase().includes(q))
-    : sweepRows;
+    ? ordered.filter(d => (d.location ?? '').toLowerCase().includes(q))
+    : ordered;
 
   if (!shown.length) {
     rows.innerHTML = q

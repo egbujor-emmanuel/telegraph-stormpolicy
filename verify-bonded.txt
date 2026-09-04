@@ -1,0 +1,69 @@
+contract: 0xECb611641342A0EF514B1D4e425b51dF0bf4f9bE
+agent:    0x98eC4d722048EB7cf6386c8F5C9757e9B0143F8c
+arbiter:  0xfd2090560eA9066a47CE641949f6146f1Aa1915D (on-chain: 0xfd2090560eA9066a47CE641949f6146f1Aa1915D)
+disputer: 0x7c16DD498B30B388154684d4855a772651933958
+bond: 0.000003 ETH   liveness: 180 s   arbiter timeout: 240 s   payout: 0.000005 ETH
+
+=== TEST 1: disputed, arbiter rules agent WAS RIGHT ===
+  policy 22 created, beneficiary 0x3a1F6b8FeBb0bFf4059DBC2562D268b5D942403B
+  PASS: assertion is Pending after assertTrigger
+  PASS: assertion is Disputed after dispute
+  PASS: disputer recorded
+  PASS: policy marked triggered
+  PASS: policy no longer active
+  PASS: beneficiary received full payout -- 0.000005 ETH
+  PASS: agent received own bond + disputer bond (2x bond) -- +0.000006 ETH
+  PASS: disputer staked exactly one bond -- -0.000003 ETH excluding their own gas
+  PASS: disputer got nothing back after losing -- 0.0 ETH at the resolve block
+
+=== TEST 2: disputed, arbiter rules agent WAS WRONG (agent slashed) ===
+  policy 23 created, beneficiary 0x445D17B634CCd381DaF751E5444BF5B98A9C287E
+  PASS: policy still active (not triggered)
+  PASS: beneficiary received NOTHING
+  PASS: agent bond NOT returned (slashed) -- delta 0.0
+  PASS: disputer paid exactly 2 bonds (own + the agent's slashed bond) -- 0.000006 ETH received at the resolve block
+  PASS: net of their stake, the disputer gains exactly 1 bond -- +0.000003 ETH
+  PASS: assertion cleared back to None after a slash -- state=0
+  PASS: policy can be asserted again after a slash
+
+=== TEST 3: revert guards ===
+  PASS: non-agent cannot assertTrigger -- execution reverted: "only agent"
+  PASS: assertTrigger with wrong bond amount reverts -- execution reverted: "wrong bond amount"
+  PASS: double-assert reverts -- execution reverted: "already asserted"
+  PASS: agent cannot dispute its own assertion -- execution reverted: "agent cannot dispute itself"
+  PASS: dispute with non-matching bond reverts -- execution reverted: "must match bond"
+  PASS: finalize before liveness expires reverts -- execution reverted: "liveness not expired"
+  PASS: funder cannot cancel while assertion exists -- execution reverted: "assertion exists"
+  PASS: non-arbiter cannot resolveDispute -- execution reverted: "only arbiter"
+  PASS: cannot re-resolve an already resolved dispute -- execution reverted: "not disputed"
+
+=== TEST 4: undisputed happy path -- assert, wait out liveness, finalize ===
+  policy 25 created, beneficiary 0x814fADed51e22E1586902B926FA087B1F0032Ab7
+  asserted; waiting 181s for liveness window to close...
+  PASS: policy marked triggered
+  PASS: beneficiary received full payout -- 0.000005 ETH
+  PASS: agent bond returned in full -- +0.000003 ETH
+  PASS: finalize was permissionless (called by non-agent)
+  finalize tx: 0x428c5c99444ab67c00f950cecc602fd97b22333bc5250f9f48381845d594319d
+
+=== TEST 5: the bond scales with the payout at stake ===
+  PASS: small policy takes the bond floor -- 0.000003 ETH
+  PASS: large policy bond scales with its payout -- 0.00002 ETH on a 0.0001 ETH payout
+  PASS: a larger payout demands a larger bond
+  PASS: asserting with the old flat bond now reverts -- execution reverted: "wrong bond amount"
+  PASS: asserting with the scaled bond succeeds
+
+=== TEST 6: a dispute the arbiter never answers can be unwound ===
+  policy 28 created
+  PASS: assertion is Disputed
+  PASS: cannot unwind before the arbiter timeout -- execution reverted: "arbiter still has time"
+  waiting 240s for the arbiter timeout to pass...
+  PASS: agent bond refunded in full -- +0.000003 ETH
+  PASS: disputer bond refunded in full -- +0.000002486853569735 ETH net of their own gas
+  PASS: nobody was slashed for the arbiter going silent
+  PASS: beneficiary received nothing
+  PASS: policy still active and assertable again
+  PASS: unwinding was permissionless (called by the disputer)
+
+============================================================
+RESULT: 42 passed, 0 failed
