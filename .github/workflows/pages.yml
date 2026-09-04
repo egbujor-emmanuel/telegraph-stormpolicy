@@ -7,6 +7,13 @@ on:
       - 'public/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch: {}
+  # The monitor commits each sweep summary, but GitHub will not let a push
+  # made by a workflow trigger another workflow -- so the agent published
+  # while the site kept serving the previous run. Deploying when the monitor
+  # finishes closes that gap.
+  workflow_run:
+    workflows: ["StormPolicy Monitor"]
+    types: [completed]
 
 permissions:
   contents: read
