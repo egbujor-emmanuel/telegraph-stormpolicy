@@ -1,9 +1,9 @@
 {
-  "sweptAt": "2026-09-04T19:13:07.598Z",
+  "sweptAt": "2026-09-04T21:33:00.295Z",
   "citiesAssessed": 12,
-  "unavailable": 13,
-  "signalsFetched": 0,
-  "triggered": 0,
+  "unavailable": 0,
+  "signalsFetched": 26,
+  "triggered": 1,
   "sweepError": null,
   "finalized": [],
   "decisions": [
@@ -11,105 +11,105 @@
       "policyId": "5",
       "location": "Cebu, Philippines",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 0%, precip 0.0mm, wind 31.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "7",
       "location": "Cebu, Philippines",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 0%, precip 0.0mm, wind 31.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "9",
       "location": "Dhaka, Bangladesh",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 3.0mm, wind 11.3km/h; thresholds 70%/20mm/50km/h)",
       "txHash": null
     },
     {
       "policyId": "11",
       "location": "Ho Chi Minh City, Vietnam",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 7.3mm, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "12",
       "location": "Kolkata, India",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 11.6mm, wind 10.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.39 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "13",
       "location": "Mumbai, India",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 10.9mm, wind 13.6km/h; thresholds 70%/20mm/50km/h); alert risk 0.42 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "14",
       "location": "Okinawa, Japan",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 12.8mm, wind 26.1km/h; thresholds 70%/20mm/50km/h)",
       "txHash": null
     },
     {
       "policyId": "15",
       "location": "Hong Kong",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 2.1mm, wind 9.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "16",
       "location": "Miami, Florida",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified forecast query as WEATHER_CHECK, not WEATHER_FORECAST -- holding",
       "txHash": null
     },
     {
       "policyId": "17",
       "location": "New Orleans, Louisiana",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 1.6mm, wind 13.7km/h; thresholds 70%/20mm/50km/h); alert risk 0.28 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "18",
       "location": "Darwin, Australia",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 1.3mm, wind 16.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.24 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "19",
       "location": "Reykjavik, Iceland",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (precip 0.1mm, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.33 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "20",
       "location": "Manila, Philippines",
-      "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
-      "txHash": null
+      "triggered": true,
+      "unavailable": false,
+      "reason": "corroborated: forecast confidence 1.00 (precip 100%, precip 17.7mm, wind 41.2km/h) + alert risk 0.90 (warning) both cross threshold for Manila, Philippines",
+      "txHash": "0xe71391b567a4a1a8b3236ab26c0449588db51eae9377cfc6bff818449a7220a4"
     }
   ]
 }
