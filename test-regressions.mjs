@@ -158,6 +158,51 @@ console.log('\n=== BUG 2: severity must be derived from whichever shape a miner 
     result: { risk_flags: ['none'], location: 'Manila' },
   }).severe === false);
 
+  // Real daily series captured live from miner 7305 (SkyWire Weather
+  // Forecast, Manila). It spells the same measurements differently again:
+  // precipitation_mm rather than precip_mm, and wind already in km/h rather
+  // than m/s. Saturday's 24.9mm clears the 20mm threshold on its own.
+  const skywire = extractForecastSignal({
+    result: {
+      confidence: 0.95,
+      location: 'Manila',
+      country: 'Philippines',
+      days_covered: 3,
+      forecast: [
+        { condition: 'light rain showers', date: '2026-09-04', day: 'Friday', high_c: 29, low_c: 26.6, precipitation_mm: 2.6, precipitation_probability_percent: null, wind_gust_kmh: null, wind_speed_kmh: 37.1 },
+        { condition: 'heavy rain', date: '2026-09-05', day: 'Saturday', high_c: 28.1, low_c: 25.7, precipitation_mm: 24.9, precipitation_probability_percent: null, wind_gust_kmh: null, wind_speed_kmh: 40 },
+        { condition: 'light rain', date: '2026-09-06', day: 'Sunday', high_c: 28.4, low_c: 25.5, precipitation_mm: 7, precipitation_probability_percent: null, wind_gust_kmh: null, wind_speed_kmh: 45 },
+      ],
+    },
+  });
+  check('miner-7305 daily series: precipitation read, not null', skywire.precipMm !== null, `precipMm=${skywire.precipMm}`);
+  check('miner-7305 daily series: km/h wind read without unit inflation', skywire.gustKmh === 45, `gustKmh=${skywire.gustKmh}`);
+  check('miner-7305: the 24.9mm day is severe', skywire.severe === true);
+  check('daily entries are not summed into a fake total', skywire.precipMm === 24.9,
+    `precipMm=${skywire.precipMm} (2.6+24.9+7 would be 34.5)`);
+
+  // The same shape on a genuinely calm run must still be judged calm.
+  const skywireCalm = extractForecastSignal({
+    result: {
+      location: 'Manila',
+      forecast: [
+        { date: '2026-09-04', day: 'Friday', precipitation_mm: 1.2, wind_speed_kmh: 12 },
+        { date: '2026-09-05', day: 'Saturday', precipitation_mm: 0.4, wind_speed_kmh: 15 },
+      ],
+    },
+  });
+  check('miner-7305 calm day: correctly not severe', skywireCalm.severe === false,
+    `precipMm=${skywireCalm.precipMm} gustKmh=${skywireCalm.gustKmh}`);
+
+  // Hourly series still accumulate across the window rather than taking a max.
+  const hourly = extractForecastSignal({
+    result: {
+      location: 'Manila',
+      forecast: Array.from({ length: 8 }, (_, i) => ({ time: `0${i}:00`, precip_mm: 3, wind_ms: 5 })),
+    },
+  });
+  check('hourly entries are summed across the window', hourly.precipMm === 24, `precipMm=${hourly.precipMm}`);
+
   // A miner returning nothing usable must fail closed, not open.
   const empty = extractForecastSignal({ result: { location: 'Manila' } });
   check('no severity fields at all -> not severe (fails closed)', empty.severe === false);

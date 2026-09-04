@@ -25,6 +25,36 @@ function num(v) {
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
 }
 
+/// One entry of a forecast series, read across the spellings and units
+/// different miners use for the same measurement.
+function entryPrecipMm(e) {
+  return num(e?.precip_mm) ?? num(e?.precipitation_mm) ?? num(e?.rain_mm);
+}
+
+function entryPrecipPct(e) {
+  return num(e?.precipitation_probability_percent)
+    ?? num(e?.precipitation_probability_pct)
+    ?? num(e?.precip_probability_pct);
+}
+
+/// Wind, normalized to km/h. An explicit gust is preferred; sustained wind
+/// is a strictly harder bar to clear than gusts, so falling back to it fails
+/// closed rather than open.
+function entryGustKmh(e) {
+  const kmh = num(e?.wind_gust_kmh) ?? num(e?.wind_speed_kmh) ?? num(e?.wind_kmh);
+  if (kmh !== null) return kmh;
+  const ms = num(e?.wind_gust_ms) ?? num(e?.wind_ms);
+  return ms === null ? null : ms * 3.6;
+}
+
+/// Distinguishes an hourly series from a daily one. Hourly precipitation
+/// accumulates across the window; daily figures are already totals.
+function looksHourly(series) {
+  if (series.some(e => e && (e.time != null || e.hour != null || e.datetime != null || e.ts != null))) return true;
+  if (series.some(e => e && (e.date != null || e.day != null))) return false;
+  return series.length > 24;
+}
+
 /// Some miners return no structured fields at all -- miner 4433 ("LiveCert
 /// Operational Signals") answers WEATHER_FORECAST with the numbers embedded
 /// in an English sentence and nothing else. Reading only structured fields
@@ -90,25 +120,34 @@ export function extractForecastSignal(raw) {
   let gustKmh = num(r.peak_gust_kmh) ?? num(r.wind_gust_max_kmh) ?? num(r.wind_gust_kmh);
   let precipMm = num(r.precipitation_mm);
 
-  const hourly = Array.isArray(r.forecast) ? r.forecast : [];
-  if (hourly.length) {
-    // Prefer an explicit gust field; fall back to sustained wind, which is a
-    // strictly harder bar to clear than gusts -- it fails closed, never open.
-    const winds = hourly.map(h => num(h?.wind_gust_ms) ?? num(h?.wind_ms)).filter(v => v !== null);
-    if (winds.length && gustKmh === null) gustKmh = Math.max(...winds) * 3.6;
+  // Series entries carry the same measurements under different names and
+  // units depending on the miner: `precip_mm` or `precipitation_mm`, wind in
+  // m/s or already in km/h. Read whichever is present rather than one
+  // spelling, and never let a unit assumption inflate a reading.
+  for (const series of [r.forecast, r.days]) {
+    if (!Array.isArray(series) || series.length === 0) continue;
 
-    const hourlyPrecip = hourly.map(h => num(h?.precip_mm)).filter(v => v !== null);
-    if (hourlyPrecip.length) {
-      const total = hourlyPrecip.reduce((a, b) => a + b, 0);
-      precipMm = precipMm === null ? total : Math.max(precipMm, total);
+    const gusts = series.map(entryGustKmh).filter(v => v !== null);
+    if (gusts.length) {
+      const seriesGust = Math.max(...gusts);
+      gustKmh = gustKmh === null ? seriesGust : Math.max(gustKmh, seriesGust);
     }
-  }
 
-  const days = Array.isArray(r.days) ? r.days : [];
-  const dailyPrecip = days.map(d => num(d?.precip_mm)).filter(v => v !== null);
-  if (dailyPrecip.length) {
-    const maxDay = Math.max(...dailyPrecip);
-    precipMm = precipMm === null ? maxDay : Math.max(precipMm, maxDay);
+    const pcts = series.map(entryPrecipPct).filter(v => v !== null);
+    if (pcts.length) {
+      const seriesPct = Math.max(...pcts);
+      precipPct = precipPct === null ? seriesPct : Math.max(precipPct, seriesPct);
+    }
+
+    const precips = series.map(entryPrecipMm).filter(v => v !== null);
+    if (precips.length) {
+      // Hourly entries accumulate over the window; daily entries already are
+      // totals, so summing them would overstate a single day's rainfall.
+      const seriesPrecip = looksHourly(series)
+        ? precips.reduce((a, b) => a + b, 0)
+        : Math.max(...precips);
+      precipMm = precipMm === null ? seriesPrecip : Math.max(precipMm, seriesPrecip);
+    }
   }
 
   // A miner-declared risk flag ("none" means no flag) is itself a severity signal.
