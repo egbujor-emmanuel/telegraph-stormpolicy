@@ -75,6 +75,54 @@ document.querySelectorAll('[data-count]').forEach((el) => {
 let signer = null;
 let browserProvider = null;
 
+// ── Wallet discovery (EIP-6963) ─────────────────────────────────────────
+// Wallets used to fight over the single window.ethereum slot, so whichever
+// extension loaded last answered for the page -- which is how a request can
+// be declined by a wallet you never meant to use, without a prompt. EIP-6963
+// lets every installed wallet announce itself instead, so any of them can be
+// used and the choice is the user's rather than a race.
+const discoveredWallets = new Map();
+window.addEventListener('eip6963:announceProvider', (event) => {
+  const { info, provider } = event.detail;
+  discoveredWallets.set(info.uuid, { info, provider });
+});
+window.dispatchEvent(new Event('eip6963:requestProvider'));
+
+/// Every wallet available to the page, newest discovery standard first and
+/// falling back to the legacy injected object for wallets that predate it.
+function availableWallets() {
+  if (discoveredWallets.size > 0) return [...discoveredWallets.values()];
+  const legacy = Array.isArray(window.ethereum?.providers) ? window.ethereum.providers : null;
+  if (legacy) {
+    return legacy.map((provider, i) => ({
+      info: { name: provider.isMetaMask ? 'MetaMask' : provider.isCoinbaseWallet ? 'Coinbase Wallet' : `Wallet ${i + 1}`, uuid: 'legacy-' + i },
+      provider,
+    }));
+  }
+  if (window.ethereum) return [{ info: { name: 'Browser wallet', uuid: 'legacy' }, provider: window.ethereum }];
+  return [];
+}
+
+/// With one wallet, use it. With several, ask -- picking for the user is
+/// what caused a silent rejection from a wallet they do not use.
+function chooseWallet(wallets) {
+  if (wallets.length === 1) return Promise.resolve(wallets[0]);
+  return new Promise((resolve) => {
+    const host = document.getElementById('wallet-picker');
+    host.innerHTML = '<span class="picker-label">Choose a wallet:</span>' + wallets
+      .map((w, i) => `<button class="btn btn-outline btn-sm" data-wallet="${i}">${w.info.name}</button>`)
+      .join('');
+    host.hidden = false;
+    host.querySelectorAll('button[data-wallet]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        host.hidden = true;
+        host.innerHTML = '';
+        resolve(wallets[Number(btn.dataset.wallet)]);
+      }, { once: true });
+    });
+  });
+}
+
 // ── Wallet connect ──────────────────────────────────────────────────────
 document.getElementById('connect-btn').addEventListener('click', async () => {
   const walletStatus = document.getElementById('wallet-status');
@@ -89,19 +137,19 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     document.getElementById('create').scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
-  if (!window.ethereum) {
+  const wallets = availableWallets();
+  if (wallets.length === 0) {
     connectBtn.textContent = 'No wallet found';
     setTimeout(() => { connectBtn.textContent = 'Connect Wallet'; }, 4000);
-    report('No browser wallet detected. Install MetaMask (or another injected wallet), then reload this page to create a policy. Everything else on this page works without one.', 'err');
+    report('No browser wallet detected. Any EVM wallet works here — MetaMask, Coinbase Wallet, Rabby, Brave, Frame. Install one, reload, and click Connect. Everything else on this page works without a wallet.', 'err');
     return;
   }
 
-  // When several wallet extensions are installed they fight over
-  // window.ethereum, and whichever won can reject a request without ever
-  // showing a prompt. Prefer MetaMask from the list each provider registers.
-  const providers = Array.isArray(window.ethereum.providers) ? window.ethereum.providers : null;
-  const provider = providers?.find(p => p.isMetaMask) ?? window.ethereum;
-  const rivals = providers && providers.length > 1;
+  const rivals = wallets.length > 1;
+  if (rivals) report(`${wallets.length} wallets available. Pick the one you want to connect with.`, '');
+  const chosen = await chooseWallet(wallets);
+  const provider = chosen.provider;
+  const walletName = chosen.info.name;
 
   try {
     connectBtn.textContent = 'Check your wallet…';
@@ -128,7 +176,7 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     document.getElementById('cp-beneficiary').value = address;
     document.getElementById('create-btn').disabled = false;
     connectBtn.textContent = 'Connected';
-    report(`Connected: ${address.slice(0, 6)}...${address.slice(-4)} on Base Sepolia. Fill in a location and payout below.`, 'ok');
+    report(`Connected with ${walletName}: ${address.slice(0, 6)}...${address.slice(-4)} on Base Sepolia. Fill in a location and payout below.`, 'ok');
   } catch (err) {
     connectBtn.textContent = 'Connect Wallet';
     const code = err?.code;
@@ -140,16 +188,15 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     // asserting a cause the page cannot know.
     let msg;
     if (code === -32002) {
-      msg = 'Your wallet already has a pending connection request. Open the extension and approve (or dismiss) it, then click Connect again.';
+      msg = `${walletName} already has a pending connection request. Open the extension, approve or dismiss it, then click Connect again.`;
     } else if (code === 4001) {
-      msg = rivals
-        ? 'The request was declined and no prompt appeared. More than one wallet extension is installed here, and they compete for the page — disable the others (or set MetaMask as default) and reload.'
-        : 'The request was declined. If no prompt appeared, your wallet is probably locked: open the extension, unlock it, then click Connect again.';
+      msg = `${walletName} declined the request. If no prompt appeared it is probably locked — open the extension, unlock it, and click Connect again.`
+        + (rivals ? ' You have more than one wallet installed, so you can also pick a different one.' : '');
     } else {
-      msg = 'Connection failed: ' + detail;
+      msg = `Connection failed in ${walletName}: ` + detail;
     }
     report(`${msg}${code !== undefined ? ` [code ${code}]` : ''}`, 'err');
-    console.error('[wallet] connect failed', { code, detail, rivals, providerCount: providers?.length ?? 1 });
+    console.error('[wallet] connect failed', { wallet: walletName, code, detail, available: wallets.map(w => w.info.name) });
   }
 });
 

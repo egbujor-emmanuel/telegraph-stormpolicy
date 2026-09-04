@@ -315,3 +315,6 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: #f7faf8; bor
   font-family: var(--font-mono); font-size: 10px; font-weight: 400; vertical-align: middle;
   background: rgba(139,152,143,0.12); color: var(--muted-2); border: 1px solid var(--border-soft);
 }
+
+.wallet-picker { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 10px 0 4px; }
+.picker-label { font-size: 12.5px; color: var(--muted); }
