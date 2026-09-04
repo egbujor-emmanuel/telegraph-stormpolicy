@@ -103,56 +103,60 @@ function availableWallets() {
   return [];
 }
 
-/// With one wallet, use it. With several, ask -- picking for the user is
-/// what caused a silent rejection from a wallet they do not use.
-function chooseWallet(wallets) {
-  if (wallets.length === 1) return Promise.resolve(wallets[0]);
-  return new Promise((resolve) => {
-    const host = document.getElementById('wallet-picker');
-    host.innerHTML = '<span class="picker-label">Choose a wallet:</span>' + wallets
-      .map((w, i) => `<button class="btn btn-outline btn-sm" data-wallet="${i}">${w.info.name}</button>`)
-      .join('');
-    host.hidden = false;
-    host.querySelectorAll('button[data-wallet]').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        host.hidden = true;
-        host.innerHTML = '';
-        resolve(wallets[Number(btn.dataset.wallet)]);
-      }, { once: true });
-    });
-  });
+// ── Wallet connect (modal) ──────────────────────────────────────────────
+const walletModal = document.getElementById('wallet-modal');
+const walletList = document.getElementById('wallet-list');
+const walletStatusEl = document.getElementById('wallet-status');
+const walletModalSub = document.getElementById('wallet-modal-sub');
+const connectBtn = document.getElementById('connect-btn');
+
+function walletReport(msg, kind) {
+  walletStatusEl.textContent = msg;
+  walletStatusEl.className = 'status-line ' + kind;
 }
 
-// ── Wallet connect ──────────────────────────────────────────────────────
-document.getElementById('connect-btn').addEventListener('click', async () => {
-  const walletStatus = document.getElementById('wallet-status');
-  const connectBtn = document.getElementById('connect-btn');
-
-  // The button sits in the nav but its status line sits in the form well
-  // below the fold, so a failure here used to be invisible: you clicked and
-  // nothing appeared to happen. Always bring the message into view.
-  const report = (msg, kind) => {
-    walletStatus.textContent = msg;
-    walletStatus.className = 'status-line ' + kind;
-    document.getElementById('create').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  };
-
+function openWalletModal() {
   const wallets = availableWallets();
+  walletReport('', '');
+  walletList.innerHTML = '';
+
   if (wallets.length === 0) {
-    connectBtn.textContent = 'No wallet found';
-    setTimeout(() => { connectBtn.textContent = 'Connect Wallet'; }, 4000);
-    report('No browser wallet detected. Any EVM wallet works here — MetaMask, Coinbase Wallet, Rabby, Brave, Frame. Install one, reload, and click Connect. Everything else on this page works without a wallet.', 'err');
-    return;
+    walletModalSub.textContent = 'No wallet extension detected in this browser.';
+    walletList.innerHTML =
+      '<p class="wallet-none">Any EVM wallet works here — '
+      + '<a href="https://metamask.io/download/" target="_blank" rel="noopener">MetaMask</a>, '
+      + '<a href="https://rabby.io/" target="_blank" rel="noopener">Rabby</a>, '
+      + 'Coinbase Wallet, Brave, or Frame. Install one and reload this page.<br><br>'
+      + 'A wallet is only needed to create your own policy — the live stats, the covered cities and the on-chain evidence above all work without one.</p>';
+  } else {
+    walletModalSub.textContent = wallets.length > 1
+      ? 'Several wallets are available. Pick the one you want to use.'
+      : 'Only needed to create your own policy. Everything else on this page works without one.';
+    for (const wallet of wallets) {
+      const btn = document.createElement('button');
+      btn.className = 'wallet-option';
+      btn.innerHTML = (wallet.info.icon ? `<img src="${wallet.info.icon}" alt="" />` : '')
+        + `<span>${wallet.info.name}</span>`;
+      btn.addEventListener('click', () => connectWith(wallet));
+      walletList.appendChild(btn);
+    }
   }
+  walletModal.hidden = false;
+}
 
-  const rivals = wallets.length > 1;
-  if (rivals) report(`${wallets.length} wallets available. Pick the one you want to connect with.`, '');
-  const chosen = await chooseWallet(wallets);
-  const provider = chosen.provider;
-  const walletName = chosen.info.name;
+function closeWalletModal() {
+  walletModal.hidden = true;
+}
 
+connectBtn.addEventListener('click', openWalletModal);
+document.getElementById('wallet-modal-close').addEventListener('click', closeWalletModal);
+walletModal.addEventListener('click', (e) => { if (e.target === walletModal) closeWalletModal(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !walletModal.hidden) closeWalletModal(); });
+
+async function connectWith({ info, provider }) {
+  const walletName = info.name;
+  walletReport(`Waiting for ${walletName}… check the extension for a prompt.`, 'loading');
   try {
-    connectBtn.textContent = 'Check your wallet…';
     await provider.request({ method: 'eth_requestAccounts' });
     try {
       await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_ID_HEX }] });
@@ -173,32 +177,47 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     browserProvider = new ethers.BrowserProvider(provider);
     signer = await browserProvider.getSigner();
     const address = await signer.getAddress();
+
     document.getElementById('cp-beneficiary').value = address;
-    document.getElementById('create-btn').disabled = false;
-    connectBtn.textContent = 'Connected';
-    report(`Connected with ${walletName}: ${address.slice(0, 6)}...${address.slice(-4)} on Base Sepolia. Fill in a location and payout below.`, 'ok');
+    const createBtn = document.getElementById('create-btn');
+    createBtn.disabled = false;
+    createBtn.textContent = 'Create Policy';
+    connectBtn.textContent = `${address.slice(0, 6)}…${address.slice(-4)}`;
+
+    walletReport(`Connected with ${walletName}.`, 'ok');
+    setTimeout(() => {
+      closeWalletModal();
+      document.getElementById('create').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 700);
   } catch (err) {
-    connectBtn.textContent = 'Connect Wallet';
     const code = err?.code;
     const detail = err?.shortMessage || err?.message || String(err);
 
-    // 4001 is a genuine decline, but a wallet can also return it without
-    // ever showing a prompt -- locked, or another extension answered first.
-    // Say what actually happened and always show the code, rather than
-    // asserting a cause the page cannot know.
+    // A wallet can return 4001 without ever showing a prompt -- locked, or
+    // answering for a page the user never pointed it at -- so name the
+    // wallet and show the code rather than asserting a cause.
     let msg;
     if (code === -32002) {
-      msg = `${walletName} already has a pending connection request. Open the extension, approve or dismiss it, then click Connect again.`;
+      msg = `${walletName} already has a pending request. Open the extension, approve or dismiss it, then try again.`;
     } else if (code === 4001) {
-      msg = `${walletName} declined the request. If no prompt appeared it is probably locked — open the extension, unlock it, and click Connect again.`
-        + (rivals ? ' You have more than one wallet installed, so you can also pick a different one.' : '');
+      msg = `${walletName} declined. If no prompt appeared it is probably locked — open the extension, unlock it, and try again.`;
     } else {
-      msg = `Connection failed in ${walletName}: ` + detail;
+      msg = `${walletName} failed to connect: ${detail}`;
     }
-    report(`${msg}${code !== undefined ? ` [code ${code}]` : ''}`, 'err');
-    console.error('[wallet] connect failed', { wallet: walletName, code, detail, available: wallets.map(w => w.info.name) });
+    walletReport(`${msg}${code !== undefined ? ` [code ${code}]` : ''}`, 'err');
+    console.error('[wallet] connect failed', { wallet: walletName, code, detail });
   }
+}
+
+// ── Payout presets ──────────────────────────────────────────────────────
+const payoutInput = document.getElementById('cp-payout');
+document.querySelectorAll('#payout-presets .preset').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    payoutInput.value = btn.dataset.amount;
+    document.querySelectorAll('#payout-presets .preset').forEach(b => b.classList.toggle('on', b === btn));
+  });
 });
+
 
 // ── Create policy (direct on-chain, user's own wallet) ──────────────────
 document.getElementById('create-btn').addEventListener('click', async () => {

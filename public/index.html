@@ -211,26 +211,40 @@ Value conservation checked exactly, including the OP-stack L1 data fee.</pre>
   <section id="create" class="panel reveal">
     <div class="panel-head">
       <h2>Create a policy</h2>
-      <p class="panel-desc">Fund and register a policy directly from your own wallet. The payout releases automatically once corroboration clears for this location &mdash; you never call it manually.</p>
+      <p class="panel-desc">Cover for one place, funded up front and settled by the agent rather than by a claim. You escrow an amount now; if corroborated storm conditions hit that location, exactly that amount is released to whoever you name. If they never do, you take it back.</p>
     </div>
     <div class="panel-body">
-      <div class="status-line" id="wallet-status">Not connected.</div>
-      <div class="wallet-picker" id="wallet-picker" hidden></div>
-      <div class="field-row">
-        <div class="field grow">
-          <label for="cp-beneficiary">Beneficiary address</label>
-          <input id="cp-beneficiary" placeholder="0x..." />
-        </div>
-        <div class="field">
-          <label for="cp-payout">Payout (ETH)</label>
-          <input id="cp-payout" placeholder="0.0001" />
-        </div>
-      </div>
+
+      <ol class="how-list">
+        <li><span class="how-step">1</span><span><strong>You escrow an amount.</strong> It sits in the contract, visible on-chain. Nobody, including us, can spend it on anything else.</span></li>
+        <li><span class="how-step">2</span><span><strong>The agent watches your location</strong> against two live Telegraph signals, on a schedule, without being asked.</span></li>
+        <li><span class="how-step">3</span><span><strong>It releases or it doesn't.</strong> Corroborated storm conditions send the full amount to the beneficiary. Otherwise you cancel and reclaim it whenever you like.</span></li>
+      </ol>
+
       <div class="field">
-        <label for="cp-location">Location</label>
+        <label for="cp-location">Location to cover</label>
         <input id="cp-location" placeholder="e.g. Manila, Philippines" />
+        <span class="field-hint">A city the forecast and alert signals can both resolve. Storm-exposed places are the realistic case &mdash; Manila, Cebu, Taipei, Miami, Okinawa, Dhaka.</span>
       </div>
-      <button class="btn btn-primary" id="create-btn" disabled>Create Policy</button>
+
+      <div class="field">
+        <label for="cp-payout">Amount to escrow &mdash; the payout if a storm hits</label>
+        <input id="cp-payout" placeholder="0.000002" />
+        <div class="presets" id="payout-presets">
+          <button type="button" class="preset" data-amount="0.000002">0.000002 ETH</button>
+          <button type="button" class="preset" data-amount="0.00001">0.00001 ETH</button>
+          <button type="button" class="preset" data-amount="0.0001">0.0001 ETH</button>
+        </div>
+        <span class="field-hint">This is test ETH on Base Sepolia, not real money. The whole amount is what gets paid out &mdash; there is no premium and no partial settlement. Small values are fine; the standing book uses 0.000002 ETH per city.</span>
+      </div>
+
+      <div class="field">
+        <label for="cp-beneficiary">Who gets paid</label>
+        <input id="cp-beneficiary" placeholder="0x..." />
+        <span class="field-hint">Filled with your own address when you connect. Change it if the cover is for someone else.</span>
+      </div>
+
+      <button class="btn btn-primary" id="create-btn" disabled>Connect a wallet to continue</button>
       <div class="status-line" id="create-status"></div>
     </div>
   </section>
@@ -254,6 +268,17 @@ Value conservation checked exactly, including the OP-stack L1 data fee.</pre>
     <span class="footer-muted">Built for the Telegraph Protocol Hackathon, Track 3</span>
   </div>
 </footer>
+
+
+<div class="modal-overlay" id="wallet-modal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wallet-modal-title">
+    <button class="modal-close" id="wallet-modal-close" aria-label="Close">&times;</button>
+    <h3 id="wallet-modal-title">Connect a wallet</h3>
+    <p class="modal-sub" id="wallet-modal-sub">Only needed to create your own policy. Everything else on this page works without one.</p>
+    <div class="wallet-list" id="wallet-list"></div>
+    <div class="status-line" id="wallet-status"></div>
+  </div>
+</div>
 
 <script src="app.js"></script>
 </body>
