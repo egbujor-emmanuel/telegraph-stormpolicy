@@ -74,6 +74,7 @@ document.querySelectorAll('[data-count]').forEach((el) => {
 
 let signer = null;
 let browserProvider = null;
+let activeProvider = null;
 
 // ── Wallet discovery (EIP-6963) ─────────────────────────────────────────
 // Wallets used to fight over the single window.ethereum slot, so whichever
@@ -148,16 +149,58 @@ function closeWalletModal() {
   walletModal.hidden = true;
 }
 
-connectBtn.addEventListener('click', openWalletModal);
+connectBtn.addEventListener('click', () => {
+  // Already connected? Reopening should let the account be changed, not
+  // silently keep the one the wallet happened to hand back first.
+  if (activeProvider) {
+    const wallets = availableWallets();
+    const current = wallets.find(w => w.provider === activeProvider) ?? wallets[0];
+    if (current) { walletModal.hidden = false; connectWith(current); return; }
+  }
+  openWalletModal();
+});
 document.getElementById('wallet-modal-close').addEventListener('click', closeWalletModal);
 walletModal.addEventListener('click', (e) => { if (e.target === walletModal) closeWalletModal(); });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !walletModal.hidden) closeWalletModal(); });
+
+/// Lets the user choose which account to use, with each one's balance
+/// shown -- a wallet holds several and the first one it hands back is
+/// often not the funded one.
+function chooseAccount(accounts, balances) {
+  if (accounts.length === 1) return Promise.resolve(accounts[0]);
+  return new Promise((resolve) => {
+    walletModalSub.textContent = 'Choose the account to use.';
+    walletList.innerHTML = '';
+    accounts.forEach((address, i) => {
+      const eth = Number(ethers.formatEther(balances[i]));
+      const btn = document.createElement('button');
+      btn.className = 'wallet-option';
+      btn.innerHTML = `<span class="acct-addr">${address.slice(0, 6)}…${address.slice(-4)}</span>`
+        + `<span class="acct-bal${eth > 0 ? ' funded' : ''}">${eth > 0 ? eth.toFixed(6) + ' ETH' : 'no funds'}</span>`;
+      btn.addEventListener('click', () => resolve(address));
+      walletList.appendChild(btn);
+    });
+  });
+}
+
+/// Re-opens the wallet's own account chooser, so accounts the page was
+/// never granted can be added without disconnecting first.
+async function requestDifferentAccount(provider) {
+  try {
+    await provider.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+    return true;
+  } catch (err) {
+    if (err?.code === 4001) return false;
+    throw err;
+  }
+}
 
 async function connectWith({ info, provider }) {
   const walletName = info.name;
   walletReport(`Waiting for ${walletName}… check the extension for a prompt.`, 'loading');
   try {
-    await provider.request({ method: 'eth_requestAccounts' });
+    let accounts = await provider.request({ method: 'eth_requestAccounts' });
+
     try {
       await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_ID_HEX }] });
     } catch (switchErr) {
@@ -174,21 +217,40 @@ async function connectWith({ info, provider }) {
         });
       }
     }
-    browserProvider = new ethers.BrowserProvider(provider);
-    signer = await browserProvider.getSigner();
-    const address = await signer.getAddress();
 
+    browserProvider = new ethers.BrowserProvider(provider);
+    activeProvider = provider;
+
+    // Balances come from the public RPC rather than the wallet, so they are
+    // right even if the wallet is still catching up on the network switch.
+    walletReport('Reading account balances…', 'loading');
+    let balances = await Promise.all(accounts.map(a => readProvider.getBalance(a).catch(() => 0n)));
+
+    const address = await chooseAccount(accounts, balances);
+    signer = await browserProvider.getSigner(address);
+
+    const balance = balances[accounts.indexOf(address)] ?? 0n;
     document.getElementById('cp-beneficiary').value = address;
     const createBtn = document.getElementById('create-btn');
     createBtn.disabled = false;
     createBtn.textContent = 'Create Policy';
     connectBtn.textContent = `${address.slice(0, 6)}…${address.slice(-4)}`;
 
-    walletReport(`Connected with ${walletName}.`, 'ok');
+    if (balance === 0n) {
+      walletModalSub.textContent = 'Connected, but this account holds nothing.';
+      walletList.innerHTML = '<button class="wallet-option" id="switch-acct"><span>Use a different account</span></button>';
+      document.getElementById('switch-acct').addEventListener('click', async () => {
+        if (await requestDifferentAccount(provider)) connectWith({ info, provider });
+      });
+      walletReport('This account has no Base Sepolia ETH. Pick another, or fund it from a faucet.', 'err');
+      return;
+    }
+
+    walletReport(`Connected with ${walletName} — ${Number(ethers.formatEther(balance)).toFixed(6)} ETH.`, 'ok');
     setTimeout(() => {
       closeWalletModal();
       document.getElementById('create').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 700);
+    }, 800);
   } catch (err) {
     const code = err?.code;
     const detail = err?.shortMessage || err?.message || String(err);

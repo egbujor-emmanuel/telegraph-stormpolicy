@@ -372,3 +372,8 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: #f7faf8; bor
   cursor: pointer; transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 }
 .preset:hover, .preset.on { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+.wallet-option { justify-content: space-between; }
+.acct-addr { font-family: var(--font-mono); font-size: 13px; }
+.acct-bal { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted-2); font-weight: 400; }
+.acct-bal.funded { color: var(--accent); }
