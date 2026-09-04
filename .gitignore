@@ -5,3 +5,6 @@ node_modules/
 bonded-clean.txt
 bonded-test-out.txt
 sweep-out.txt
+live-sweep.json
+verify-bonded.txt
+health.json
