@@ -8,6 +8,20 @@ A parametric storm-insurance protocol built on Telegraph Protocol for the Track 
 
 Telegraph's own hackathon rules name "verified intelligence directly triggering on-chain actions — trading, liquidations, arbitrage, compliance checks, treasury management" as one of the highest-value areas for Track 3. A survey of all six existing official Telegraph use-cases (AdGuard, ReviewRadar, ScholarGuard, TrustFilter, TruthWire, SuperSignal) found that every one of them lives in AI-content-detection, and none of them has a smart contract autonomously executing a decision — the closest, SuperSignal, still stores its decision off-chain. Financial & On-Chain and Weather & Sports, the two intent categories StormPolicy uses, are untouched by any existing example. This targets that gap directly.
 
+## Who uses this, and how
+
+**Someone who wants cover** goes to the [live site](https://egbujor-emmanuel.github.io/telegraph-stormpolicy/), connects a wallet, names a city, escrows an amount and names who gets paid. Then they stop touching it. The agent watches that location on a schedule and either releases the money or does not. Cancelling reclaims the escrow at any time before it triggers.
+
+**An agent does it without a human.** The same pipeline is an MCP server, so an assistant in Claude Code, Claude Desktop or Cursor can open cover, assess a location, check a policy and sweep the book as tools — the "machines consuming verified intelligence" case, driven by a machine rather than a form.
+
+**A developer builds on the contract directly.** `createPolicy(beneficiary, location)` with value attached is the whole interface; the evidence for every settlement is in the `PolicyTriggered` event, so another contract or backend can react to it.
+
+### What this is, and what it is not
+
+The contract does one thing well: an agreed sum, held in escrow, released automatically once two independent sources agree that a storm hit a named place. That fits wherever the payout is already agreed and the argument would be about whether the event happened — a shipper and a client settling typhoon compensation, relief funds pre-positioned with a local partner and released without waiting on a committee, a treasury hedging a known seasonal exposure.
+
+It is **not pooled insurance**. There is no premium, no capital pool and no underwriting: whoever wants cover funds the entire payout themselves, which makes this conditional settlement rather than risk transfer. Pricing a premium means modelling how likely the event is, which is a different problem from establishing whether it occurred — and it is the second one this project set out to solve. The verification layer is the part that has to be trustworthy first; a pool built on a settlement rail nobody trusts would be worth nothing.
+
 ## How it works
 
 1. **`StormPolicy.sol`** (deployed on Base Sepolia) is a minimal parametric-insurance primitive: anyone can fund and register a policy (location, beneficiary, payout amount). A single authorized agent address can trigger a policy's payout exactly once, and must attach the full evidence — both signal hashes, both confidence values, a human-readable reason — as part of that call, so the decision is auditable on a block explorer, not just asserted.
