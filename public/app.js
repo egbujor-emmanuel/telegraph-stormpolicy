@@ -95,13 +95,22 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     report('No browser wallet detected. Install MetaMask (or another injected wallet), then reload this page to create a policy. Everything else on this page works without one.', 'err');
     return;
   }
+
+  // When several wallet extensions are installed they fight over
+  // window.ethereum, and whichever won can reject a request without ever
+  // showing a prompt. Prefer MetaMask from the list each provider registers.
+  const providers = Array.isArray(window.ethereum.providers) ? window.ethereum.providers : null;
+  const provider = providers?.find(p => p.isMetaMask) ?? window.ethereum;
+  const rivals = providers && providers.length > 1;
+
   try {
-    await window.ethereum.request({ method: 'eth_requestAccounts' });
+    connectBtn.textContent = 'Check your wallet…';
+    await provider.request({ method: 'eth_requestAccounts' });
     try {
-      await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_ID_HEX }] });
+      await provider.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: CHAIN_ID_HEX }] });
     } catch (switchErr) {
       if (switchErr.code === 4902) {
-        await window.ethereum.request({
+        await provider.request({
           method: 'wallet_addEthereumChain',
           params: [{
             chainId: CHAIN_ID_HEX,
@@ -113,7 +122,7 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
         });
       }
     }
-    browserProvider = new ethers.BrowserProvider(window.ethereum);
+    browserProvider = new ethers.BrowserProvider(provider);
     signer = await browserProvider.getSigner();
     const address = await signer.getAddress();
     document.getElementById('cp-beneficiary').value = address;
@@ -121,12 +130,26 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     connectBtn.textContent = 'Connected';
     report(`Connected: ${address.slice(0, 6)}...${address.slice(-4)} on Base Sepolia. Fill in a location and payout below.`, 'ok');
   } catch (err) {
-    // Rejecting the wallet prompt is a normal thing to do, not a failure
-    // worth shouting about.
-    const rejected = err?.code === 4001 || /user rejected|denied/i.test(String(err?.message));
-    report(rejected
-      ? 'Connection cancelled in your wallet.'
-      : 'Connection failed: ' + (err?.shortMessage || err?.message || String(err)), 'err');
+    connectBtn.textContent = 'Connect Wallet';
+    const code = err?.code;
+    const detail = err?.shortMessage || err?.message || String(err);
+
+    // 4001 is a genuine decline, but a wallet can also return it without
+    // ever showing a prompt -- locked, or another extension answered first.
+    // Say what actually happened and always show the code, rather than
+    // asserting a cause the page cannot know.
+    let msg;
+    if (code === -32002) {
+      msg = 'Your wallet already has a pending connection request. Open the extension and approve (or dismiss) it, then click Connect again.';
+    } else if (code === 4001) {
+      msg = rivals
+        ? 'The request was declined and no prompt appeared. More than one wallet extension is installed here, and they compete for the page — disable the others (or set MetaMask as default) and reload.'
+        : 'The request was declined. If no prompt appeared, your wallet is probably locked: open the extension, unlock it, then click Connect again.';
+    } else {
+      msg = 'Connection failed: ' + detail;
+    }
+    report(`${msg}${code !== undefined ? ` [code ${code}]` : ''}`, 'err');
+    console.error('[wallet] connect failed', { code, detail, rivals, providerCount: providers?.length ?? 1 });
   }
 });
 
