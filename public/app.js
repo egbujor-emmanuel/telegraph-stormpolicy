@@ -79,9 +79,20 @@ let browserProvider = null;
 document.getElementById('connect-btn').addEventListener('click', async () => {
   const walletStatus = document.getElementById('wallet-status');
   const connectBtn = document.getElementById('connect-btn');
+
+  // The button sits in the nav but its status line sits in the form well
+  // below the fold, so a failure here used to be invisible: you clicked and
+  // nothing appeared to happen. Always bring the message into view.
+  const report = (msg, kind) => {
+    walletStatus.textContent = msg;
+    walletStatus.className = 'status-line ' + kind;
+    document.getElementById('create').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   if (!window.ethereum) {
-    walletStatus.textContent = 'No injected wallet found. Install MetaMask to create a policy.';
-    walletStatus.className = 'status-line err';
+    connectBtn.textContent = 'No wallet found';
+    setTimeout(() => { connectBtn.textContent = 'Connect Wallet'; }, 4000);
+    report('No browser wallet detected. Install MetaMask (or another injected wallet), then reload this page to create a policy. Everything else on this page works without one.', 'err');
     return;
   }
   try {
@@ -105,14 +116,17 @@ document.getElementById('connect-btn').addEventListener('click', async () => {
     browserProvider = new ethers.BrowserProvider(window.ethereum);
     signer = await browserProvider.getSigner();
     const address = await signer.getAddress();
-    walletStatus.textContent = `Connected: ${address.slice(0, 6)}...${address.slice(-4)}`;
-    walletStatus.className = 'status-line ok';
     document.getElementById('cp-beneficiary').value = address;
     document.getElementById('create-btn').disabled = false;
     connectBtn.textContent = 'Connected';
+    report(`Connected: ${address.slice(0, 6)}...${address.slice(-4)} on Base Sepolia. Fill in a location and payout below.`, 'ok');
   } catch (err) {
-    walletStatus.textContent = 'Connection failed: ' + err.message;
-    walletStatus.className = 'status-line err';
+    // Rejecting the wallet prompt is a normal thing to do, not a failure
+    // worth shouting about.
+    const rejected = err?.code === 4001 || /user rejected|denied/i.test(String(err?.message));
+    report(rejected
+      ? 'Connection cancelled in your wallet.'
+      : 'Connection failed: ' + (err?.shortMessage || err?.message || String(err)), 'err');
   }
 });
 
