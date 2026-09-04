@@ -237,12 +237,30 @@ async function connectWith({ info, provider }) {
     connectBtn.textContent = `${address.slice(0, 6)}…${address.slice(-4)}`;
 
     if (balance === 0n) {
-      walletModalSub.textContent = 'Connected, but this account holds nothing.';
-      walletList.innerHTML = '<button class="wallet-option" id="switch-acct"><span>Use a different account</span></button>';
+      // Connect anyway. Refusing to proceed turned an empty account into a
+      // dead end, when the fix might be a faucet, a different account, or
+      // simply looking around -- none of which need the page to say no.
+      walletModalSub.innerHTML = 'Connected, but this account holds no Base Sepolia ETH. '
+        + 'Creating a policy needs some, for the escrow and for gas.';
+      walletList.innerHTML =
+        '<button class="wallet-option" id="switch-acct"><span>Use a different account</span></button>'
+        + '<a class="wallet-option" href="https://www.alchemy.com/faucets/base-sepolia" target="_blank" rel="noopener"><span>Get test ETH — Alchemy faucet</span></a>'
+        + '<a class="wallet-option" href="https://faucet.quicknode.com/base/sepolia" target="_blank" rel="noopener"><span>Get test ETH — QuickNode faucet</span></a>'
+        + '<button class="wallet-option" id="dismiss-acct"><span>Continue without funding</span></button>';
+
       document.getElementById('switch-acct').addEventListener('click', async () => {
-        if (await requestDifferentAccount(provider)) connectWith({ info, provider });
+        walletReport('Look for the account prompt in your wallet extension…', 'loading');
+        try {
+          const granted = await requestDifferentAccount(provider);
+          if (granted) return connectWith({ info, provider });
+          walletReport('No change made. You can also switch account inside the wallet extension itself — the page follows whatever it selects.', '');
+        } catch (permErr) {
+          walletReport(`This wallet would not reopen its account list (${permErr?.code ?? 'error'}). Switch account inside the extension instead — the page follows it.`, 'err');
+        }
       });
-      walletReport('This account has no Base Sepolia ETH. Pick another, or fund it from a faucet.', 'err');
+      document.getElementById('dismiss-acct').addEventListener('click', closeWalletModal);
+
+      walletReport('Connected. Everything on the page works; only creating a policy needs funds.', '');
       return;
     }
 
