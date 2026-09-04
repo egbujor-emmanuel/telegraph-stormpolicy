@@ -1,18 +1,23 @@
 {
-  "sweptAt": "2026-09-04T21:33:00.295Z",
-  "citiesAssessed": 12,
-  "unavailable": 0,
-  "signalsFetched": 26,
+  "sweptAt": "2026-09-04T21:45:58.549Z",
+  "citiesAssessed": 11,
+  "unavailable": 1,
+  "signalsFetched": 22,
   "triggered": 1,
   "sweepError": null,
-  "finalized": [],
+  "finalized": [
+    {
+      "policyId": "20",
+      "txHash": "0xe7280c39f03b61dfdfe7bfe2fa8e2e2798436f5c4895e7cd94bba5a0d3116eb6"
+    }
+  ],
   "decisions": [
     {
       "policyId": "5",
       "location": "Cebu, Philippines",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, precip 0.0mm, wind 31.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
+      "reason": "forecast not severe (precip 1.9mm, wind 23.8km/h; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -20,23 +25,23 @@
       "location": "Cebu, Philippines",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, precip 0.0mm, wind 31.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
+      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.29 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "9",
       "location": "Dhaka, Bangladesh",
-      "triggered": false,
+      "triggered": true,
       "unavailable": false,
-      "reason": "forecast not severe (precip 3.0mm, wind 11.3km/h; thresholds 70%/20mm/50km/h)",
-      "txHash": null
+      "reason": "corroborated: forecast confidence 1.00 (precip 20.1mm, wind 12.7km/h) + alert risk 0.80 (advisory) both cross threshold for Dhaka, Bangladesh",
+      "txHash": "0x5b4086fd9966a66a4a7a2b9089ca67314a53b7f718f4d8a4a20c3cf5f9801ca4"
     },
     {
       "policyId": "11",
       "location": "Ho Chi Minh City, Vietnam",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 7.3mm, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
+      "reason": "forecast not severe (precip 62%, precip 1.5mm, wind 44.9km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -52,7 +57,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 10.9mm, wind 13.6km/h; thresholds 70%/20mm/50km/h); alert risk 0.42 below threshold 0.6 (verdict: none)",
+      "reason": "forecast not severe (precip 9.8mm, wind 22.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.42 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -68,15 +73,15 @@
       "location": "Hong Kong",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 2.1mm, wind 9.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
+      "reason": "forecast not severe (precip 38%, precip 0.2mm, wind 10.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
       "policyId": "16",
       "location": "Miami, Florida",
       "triggered": false,
-      "unavailable": false,
-      "reason": "router misclassified forecast query as WEATHER_CHECK, not WEATHER_FORECAST -- holding",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
@@ -84,7 +89,7 @@
       "location": "New Orleans, Louisiana",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 1.6mm, wind 13.7km/h; thresholds 70%/20mm/50km/h); alert risk 0.28 below threshold 0.6 (verdict: none)",
+      "reason": "alert risk 0.28 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -102,14 +107,6 @@
       "unavailable": false,
       "reason": "forecast not severe (precip 0.1mm, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.33 below threshold 0.6 (verdict: none)",
       "txHash": null
-    },
-    {
-      "policyId": "20",
-      "location": "Manila, Philippines",
-      "triggered": true,
-      "unavailable": false,
-      "reason": "corroborated: forecast confidence 1.00 (precip 100%, precip 17.7mm, wind 41.2km/h) + alert risk 0.90 (warning) both cross threshold for Manila, Philippines",
-      "txHash": "0xe71391b567a4a1a8b3236ab26c0449588db51eae9377cfc6bff818449a7220a4"
     }
   ]
 }
