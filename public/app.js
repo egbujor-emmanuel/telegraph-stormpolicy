@@ -225,23 +225,76 @@ document.getElementById('create-btn').addEventListener('click', async () => {
   const beneficiary = document.getElementById('cp-beneficiary').value.trim();
   const location = document.getElementById('cp-location').value.trim();
   const payoutEth = document.getElementById('cp-payout').value.trim();
-  if (!signer) { statusEl.textContent = 'Connect a wallet first.'; statusEl.className = 'status-line err'; return; }
-  if (!beneficiary || !location || !payoutEth) { statusEl.textContent = 'All fields required.'; statusEl.className = 'status-line err'; return; }
+
+  const fail = (msg) => { statusEl.textContent = msg; statusEl.className = 'status-line err'; };
+
+  if (!signer) return fail('Connect a wallet first.');
+  if (!location) return fail('Enter the location you want covered.');
+  if (!payoutEth) return fail('Enter an amount to escrow, or pick one of the presets.');
+  if (!beneficiary) return fail('Enter the address that should be paid.');
+  if (!ethers.isAddress(beneficiary)) return fail('That beneficiary is not a valid address. It should look like 0x followed by 40 characters.');
+
+  let value;
   try {
-    statusEl.textContent = 'Confirm in your wallet';
+    value = ethers.parseEther(payoutEth);
+  } catch {
+    return fail(`"${payoutEth}" is not a valid ETH amount. Use a decimal like 0.000002.`);
+  }
+  if (value <= 0n) return fail('The amount to escrow has to be greater than zero.');
+
+  try {
     statusEl.className = 'status-line loading';
+    statusEl.textContent = 'Checking your wallet…';
+
+    // The two things that actually go wrong here -- wrong network, or not
+    // enough test ETH -- both surface from estimateGas as "missing revert
+    // data", which explains nothing. Check them up front and say which it is.
+    const net = await browserProvider.getNetwork();
+    if (Number(net.chainId) !== CHAIN_ID) {
+      return fail(`Your wallet is on chain ${net.chainId}, but these policies live on Base Sepolia (${CHAIN_ID}). Switch network in your wallet and try again.`);
+    }
+
+    const from = await signer.getAddress();
+    const balance = await browserProvider.getBalance(from);
+    if (balance === 0n) {
+      return fail('This account has no Base Sepolia ETH, so it cannot fund a policy or pay gas. Get some free test ETH from a Base Sepolia faucet, then try again.');
+    }
+    if (balance <= value) {
+      return fail(`You are escrowing ${payoutEth} ETH but only hold ${Number(ethers.formatEther(balance)).toFixed(6)} ETH, and gas comes out of the same balance. Try a smaller amount.`);
+    }
+
     const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-    const tx = await contract.createPolicy(beneficiary, location, { value: ethers.parseEther(payoutEth) });
-    statusEl.textContent = `Submitted ${tx.hash.slice(0, 10)}... waiting for confirmation.`;
+    statusEl.textContent = 'Confirm in your wallet…';
+    const tx = await contract.createPolicy(beneficiary, location, { value });
+
+    statusEl.textContent = `Submitted ${tx.hash.slice(0, 10)}… waiting for confirmation.`;
     const receipt = await tx.wait();
-    statusEl.textContent = `Confirmed in block ${receipt.blockNumber}.`;
+    statusEl.innerHTML = `Policy created in block ${receipt.blockNumber}. `
+      + `<a href="${EXPLORER}/tx/${tx.hash}" target="_blank" rel="noopener">View transaction</a>. `
+      + `The agent picks it up on its next sweep.`;
     statusEl.className = 'status-line ok';
     document.getElementById('cp-location').value = '';
     document.getElementById('cp-payout').value = '';
     loadPolicies();
   } catch (err) {
-    statusEl.textContent = 'Error: ' + (err.shortMessage || err.message);
+    const code = err?.code;
+    const raw = err?.shortMessage || err?.message || String(err);
+
+    let msg;
+    if (code === 'ACTION_REJECTED' || err?.info?.error?.code === 4001) {
+      msg = 'Transaction cancelled in your wallet.';
+    } else if (code === 'INSUFFICIENT_FUNDS' || /insufficient funds/i.test(raw)) {
+      msg = 'Not enough Base Sepolia ETH to cover the escrow plus gas. Top up from a faucet and try again.';
+    } else if (/missing revert data|CALL_EXCEPTION/i.test(raw)) {
+      // Reaching here means the checks above passed, so the estimate failed
+      // for a reason the node did not explain.
+      msg = 'The network could not simulate this transaction. Check that your wallet is on Base Sepolia and holds test ETH, then try again.';
+    } else {
+      msg = raw;
+    }
+    statusEl.textContent = 'Could not create the policy: ' + msg;
     statusEl.className = 'status-line err';
+    console.error('[create] failed', { code, raw, err });
   }
 });
 
