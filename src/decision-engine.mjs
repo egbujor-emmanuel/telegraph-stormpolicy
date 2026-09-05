@@ -379,7 +379,9 @@ export async function assessStormRisk(location) {
     // plainly instead of calling .toFixed() on it and taking down the sweep.
     reasons.push(alert.risk === null
       ? `alert reported no usable risk evidence (verdict: ${alert.verdict ?? 'none'}) -- holding`
-      : `alert risk ${alert.risk.toFixed(2)} below threshold ${STORM_RISK_THRESHOLD} (verdict: ${alert.verdict})`);
+      // Not every miner labels its risk, and printing "verdict: null" at a
+      // reader is worse than saying nothing.
+      : `alert risk ${alert.risk.toFixed(2)} below threshold ${STORM_RISK_THRESHOLD}${alert.verdict ? ` (verdict: ${alert.verdict})` : ''}`);
   }
 
   const reason = ok
