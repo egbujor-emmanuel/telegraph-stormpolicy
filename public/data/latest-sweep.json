@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-09-06T12:45:52.359Z",
+  "sweptAt": "2026-09-06T15:52:43.869Z",
   "citiesAssessed": 10,
   "unavailable": 0,
   "signalsFetched": 46,
@@ -12,7 +12,7 @@
       "location": "Kolkata, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Kolkata, India\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -20,7 +20,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Mumbai, India\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -28,7 +28,7 @@
       "location": "Hong Kong",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Hong Kong\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -36,7 +36,7 @@
       "location": "Miami, Florida",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Miami, Florida\" -- holding (entity-binding check); forecast not severe (precip 34%, precip 8.7mm, wind 18.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -44,7 +44,7 @@
       "location": "New Orleans, Louisiana",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"New Orleans, Louisiana\" -- holding (entity-binding check); forecast not severe (precip 9%, wind 11.8km/h; thresholds 70%/20mm/50km/h); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -52,7 +52,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Darwin, Australia\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -60,7 +60,7 @@
       "location": "Reykjavik, Iceland",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Reykjavik, Iceland\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 28.8km/h; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)",
       "txHash": null
     },
     {
@@ -68,7 +68,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Lagos Nigeria\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: unknown) -- holding",
       "txHash": null
     },
     {
@@ -76,7 +76,7 @@
       "location": "lagos, nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"lagos, nigeria\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: unknown) -- holding",
       "txHash": null
     },
     {
@@ -84,7 +84,7 @@
       "location": "lagos nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"lagos nigeria\" -- holding (entity-binding check); alert risk 0.30 below threshold 0.6 (verdict: low)",
       "txHash": null
     },
     {
@@ -92,7 +92,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "reason": "alert location \"null\" does not bind to policy location \"Lagos Nigeria\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: unknown) -- holding",
       "txHash": null
     }
   ],
@@ -101,73 +101,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Tokyo, Japan\" -- holding (entity-binding check)"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Osaka, Japan\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 35%, precip 0.1mm, wind 15.7km/h; thresholds 70%/20mm/50km/h); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Bangkok, Thailand\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Singapore\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Chennai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Chennai, India\" -- holding (entity-binding check); forecast not severe (precip 43%, precip 0.3mm, wind 15.0km/h; thresholds 70%/20mm/50km/h); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (precip 24%, wind 9.7km/h; thresholds 70%/20mm/50km/h); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Havana, Cuba\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Lagos, Nigeria\" -- holding (entity-binding check); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Sydney, Australia\" -- holding (entity-binding check); alert risk 0.10 below threshold 0.6 (verdict: none)"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Auckland, New Zealand\" -- holding (entity-binding check); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
+      "reason": "alert location \"null\" does not bind to policy location \"Lisbon, Portugal\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 18.9km/h; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     }
   ]
 }
