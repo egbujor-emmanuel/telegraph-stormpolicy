@@ -1,8 +1,8 @@
 {
-  "sweptAt": "2026-09-07T19:33:28.427Z",
+  "sweptAt": "2026-09-07T22:41:09.849Z",
   "citiesAssessed": 9,
-  "unavailable": 8,
-  "signalsFetched": 12,
+  "unavailable": 9,
+  "signalsFetched": 4,
   "triggered": 0,
   "sweepError": null,
   "finalized": [],
@@ -27,8 +27,8 @@
       "policyId": "16",
       "location": "Miami, Florida",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.23 below threshold 0.6 (verdict: none)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
@@ -67,8 +67,8 @@
       "policyId": "31",
       "location": "lagos, nigeria",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.19 below threshold 0.6 (verdict: none)",
       "txHash": null
     },
     {
@@ -83,8 +83,8 @@
       "policyId": "33",
       "location": "Lagos Nigeria",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 0.0mm, wind 7.6km/h; thresholds 70%/20mm/50km/h); alert risk 0.19 below threshold 0.6 (verdict: none)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     }
   ],
@@ -122,8 +122,8 @@
     {
       "location": "Chennai, India",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 0.1mm, wind 23.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.15 below threshold 0.6 (verdict: none)"
+      "unavailable": true,
+      "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
       "location": "Houston, Texas",
@@ -134,26 +134,26 @@
     {
       "location": "Havana, Cuba",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 0.5mm, wind 9.0km/h; thresholds 70%/20mm/50km/h); alert risk 0.19 below threshold 0.6 (verdict: none)"
+      "unavailable": true,
+      "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
       "location": "Lagos, Nigeria",
-      "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 0.0mm, wind 7.6km/h; thresholds 70%/20mm/50km/h); alert risk 0.19 below threshold 0.6 (verdict: none)"
-    },
-    {
-      "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": true,
       "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
-      "location": "Auckland, New Zealand",
+      "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0.0mm, wind 22.0km/h; thresholds 70%/20mm/50km/h); alert risk 0.16 below threshold 0.6 (verdict: none)"
+      "reason": "forecast not severe (precip 0.1mm, wind 38.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.42 below threshold 0.6 (verdict: none)"
+    },
+    {
+      "location": "Auckland, New Zealand",
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
       "location": "Lisbon, Portugal",
