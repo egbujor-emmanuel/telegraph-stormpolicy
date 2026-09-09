@@ -1,8 +1,8 @@
 {
-  "sweptAt": "2026-09-09T15:40:10.812Z",
+  "sweptAt": "2026-09-09T18:50:36.464Z",
   "citiesAssessed": 9,
-  "unavailable": 4,
-  "signalsFetched": 36,
+  "unavailable": 0,
+  "signalsFetched": 44,
   "triggered": 0,
   "sweepError": null,
   "finalized": [],
@@ -11,16 +11,16 @@
       "policyId": "13",
       "location": "Mumbai, India",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
       "policyId": "15",
       "location": "Hong Kong",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -28,15 +28,15 @@
       "location": "Miami, Florida",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.34 below threshold 0.6 (verdict: none)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
       "policyId": "17",
       "location": "New Orleans, Louisiana",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -44,7 +44,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -52,7 +52,7 @@
       "location": "Reykjavik, Iceland",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -60,7 +60,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.55 below threshold 0.6 (verdict: none)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -68,15 +68,15 @@
       "location": "lagos, nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.55 below threshold 0.6 (verdict: none)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
       "policyId": "32",
       "location": "lagos nigeria",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     },
     {
@@ -84,7 +84,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.55 below threshold 0.6 (verdict: none)",
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
       "txHash": null
     }
   ],
@@ -93,73 +93,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.26 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.37 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.32 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.28 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Chennai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.27 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.39 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.40 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.41 below threshold 0.6 (verdict: none)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)"
+      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding"
     }
   ]
 }
