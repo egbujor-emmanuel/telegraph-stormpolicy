@@ -1,55 +1,42 @@
 {
-  "sweptAt": "2026-09-10T19:03:13.692Z",
+  "sweptAt": "2026-09-10T21:32:21.391Z",
   "citiesAssessed": 5,
-  "unavailable": 1,
-  "signalsFetched": 12,
+  "unavailable": 6,
+  "signalsFetched": 0,
   "triggered": 0,
   "sweepError": null,
-  "finalized": [
-    {
-      "policyId": "17",
-      "txHash": "0x04274f06997b0701d78af0d3c3a9fda9375b3b0ea978c89a8f977292342e1b97"
-    },
-    {
-      "policyId": "31",
-      "txHash": "0xc5fd048e1f3407d718bda2b0560d29ce34ab1f763bf4624c9cc78b95f258b088"
-    },
-    {
-      "policyId": "32",
-      "txHash": "0x9b0e8d3fadcdb076ae5fa9eff9d503665bee329f4ff2badec1093499b0c78043"
-    }
-  ],
+  "finalized": [],
   "decisions": [
     {
       "policyId": "13",
       "location": "Mumbai, India",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 3.1mm, wind 10.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.14 below threshold 0.6 (verdict: none)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
       "policyId": "15",
       "location": "Hong Kong",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 2.8mm, wind 18.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.25 below threshold 0.6 (verdict: low)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
       "policyId": "16",
       "location": "Miami, Florida",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: none)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
       "policyId": "18",
       "location": "Darwin, Australia",
       "triggered": false,
-      "unavailable": false,
-      "reason": "forecast not severe (precip 0.4mm, wind 19.9km/h; thresholds 70%/20mm/50km/h); alert risk 0.38 below threshold 0.6 (verdict: none)",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
@@ -64,17 +51,17 @@
       "policyId": "33",
       "location": "Lagos Nigeria",
       "triggered": false,
-      "unavailable": false,
-      "reason": "alert location \"null\" does not bind to policy location \"Lagos Nigeria\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     }
   ],
   "watchlist": [
     {
       "location": "Tokyo, Japan",
-      "triggered": true,
-      "unavailable": false,
-      "reason": "corroborated: forecast confidence 0.99 (precip 27.0mm, wind 6.2km/h, flags heavy_precip) + alert risk 0.90 (warning) both cross threshold for Tokyo, Japan"
+      "triggered": false,
+      "unavailable": true,
+      "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
       "location": "Osaka, Japan",
