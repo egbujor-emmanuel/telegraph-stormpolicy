@@ -81,6 +81,45 @@ const PROSE_PATTERNS = {
   ],
 };
 
+/// Risk stated in prose, e.g. "Overall risk: 0.1 on a scale of 0 to 1".
+/// Anchored to the words around it so a stray decimal cannot be read as a
+/// risk score.
+const ALERT_PROSE_PATTERNS = [
+  /overall risk[:\s]+(\d*\.?\d+)\s*(?:on a scale|\/\s*1|out of 1)/i,
+  /risk(?:\s+score)?[:\s]+(\d*\.?\d+)\s*(?:on a scale|\/\s*1|out of 1)/i,
+  /(?:storm|weather)\s+risk[:\s]+(\d*\.?\d+)\b/i,
+];
+
+/// The grade a miner puts in prose ("graded none", "risk is high").
+const ALERT_PROSE_GRADE = [
+  /graded\s+(none|low|minor|moderate|medium|high|severe|extreme|warning|watch|advisory)/i,
+  /risk\s+is\s+(none|low|minor|moderate|medium|high|severe|extreme)/i,
+];
+
+function alertRiskFromProse(text) {
+  if (!text) return null;
+  for (const re of ALERT_PROSE_PATTERNS) {
+    const m = text.match(re);
+    if (m) {
+      const v = Number(m[1]);
+      if (Number.isFinite(v)) return v > 1 ? v / 100 : v;
+    }
+  }
+  return null;
+}
+
+function alertGradeFromProse(text) {
+  if (!text) return null;
+  for (const re of ALERT_PROSE_GRADE) {
+    const m = text.match(re);
+    if (m) {
+      const word = m[1].toLowerCase();
+      if (ALERT_LEVELS[word] !== undefined) return { word, value: ALERT_LEVELS[word] };
+    }
+  }
+  return null;
+}
+
 /// Pulls whatever prose text a miner attached, under any of the field names
 /// observed in the wild.
 function proseOf(r) {
@@ -213,6 +252,8 @@ export function extractAlertSignal(raw) {
   // Letting the word participate would round 0.57 ("moderate") up to 0.60
   // and trip the gate -- a false positive in the payout direction. So an
   // explicit number is used alone; everything else only fills its absence.
+  const prose = proseOf(r);
+
   const explicit = num(r.risk);
   if (explicit !== null) {
     const risk = explicit > 1 ? explicit / 100 : explicit;
@@ -220,7 +261,25 @@ export function extractAlertSignal(raw) {
       risk,
       verdict: r.verdict ?? r.level ?? null,
       location: alertLocation(r),
+      prose,
+      derivedFrom: 'structured',
       severe: risk >= STORM_RISK_THRESHOLD,
+      raw,
+    };
+  }
+
+  // Some miners answer this intent entirely in prose -- the number is in a
+  // sentence and there is no risk field at all. Reading it there is the
+  // difference between a working gate and one that can never fire.
+  const proseRisk = alertRiskFromProse(prose);
+  if (proseRisk !== null) {
+    return {
+      risk: proseRisk,
+      verdict: alertGradeFromProse(prose)?.word ?? r.verdict ?? r.level ?? null,
+      location: alertLocation(r),
+      prose,
+      derivedFrom: 'prose',
+      severe: proseRisk >= STORM_RISK_THRESHOLD,
       raw,
     };
   }
@@ -234,6 +293,9 @@ export function extractAlertSignal(raw) {
 
   // An official alert issued by a met authority is the strongest evidence
   // available; a declared threshold breach is nearly as strong.
+  const graded = alertGradeFromProse(prose);
+  if (graded) indications.push(graded.value);
+
   if (Array.isArray(r.official_alerts) && r.official_alerts.length > 0) indications.push(0.85);
   if (r.breach === true) indications.push(0.75);
   if (r.thunderstorms === true) indications.push(0.65);
@@ -251,7 +313,15 @@ export function extractAlertSignal(raw) {
   const risk = indications.length ? Math.max(...indications) : null;
 
   const severe = risk !== null && risk >= STORM_RISK_THRESHOLD;
-  return { risk, verdict: r.verdict ?? r.level ?? null, location: alertLocation(r), severe, raw };
+  return {
+    risk,
+    verdict: graded?.word ?? r.verdict ?? r.level ?? null,
+    location: alertLocation(r),
+    prose,
+    derivedFrom: indications.length ? 'structured' : 'none',
+    severe,
+    raw,
+  };
 }
 
 /// Miners are free to shape their output differently, and observed live
@@ -365,9 +435,17 @@ export async function assessStormRisk(location) {
       ? `forecast location "${forecast.location}" does not bind to policy location "${location}" -- holding (entity-binding check)`
       : `forecast reported no location and its text does not name "${location}" -- holding (entity-binding check)`);
   }
-  if (!alert.location || !locationsAgree(location, alert.location)) {
+  // The same applies to the alert side. The router moved this intent to a
+  // prose-only miner, and reading only a location field made every policy
+  // fail binding forever -- a gate that could never fire again.
+  const alertBinds = alert.location
+    ? locationsAgree(location, alert.location)
+    : locationNamedInProse(location, alert.prose);
+  if (!alertBinds) {
     ok = false;
-    reasons.push(`alert location "${alert.location}" does not bind to policy location "${location}" -- holding (entity-binding check)`);
+    reasons.push(alert.location
+      ? `alert location "${alert.location}" does not bind to policy location "${location}" -- holding (entity-binding check)`
+      : `alert reported no location and its text does not name "${location}" -- holding (entity-binding check)`);
   }
   if (!forecast.severe) {
     ok = false;

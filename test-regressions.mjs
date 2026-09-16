@@ -376,6 +376,40 @@ console.log('\n=== BUG 5: prose-only miners must still yield severity and bind =
     }).precipPct === 10);
 }
 
+// ─────────────────────────────────────────────────────────────────────────
+// The router later moved STORM_ALERT onto a prose-only miner, which reports
+// no risk field and no location -- so every policy failed entity binding and
+// the alert gate could never fire again. Captured live from miner 4433.
+// ─────────────────────────────────────────────────────────────────────────
+console.log('\n=== BUG 6: alert answered in prose must still be read and bind ===');
+{
+  const a = extractAlertSignal({
+    result: {
+      confidence: 1,
+      verdict: 'none',
+      reason: 'Regarding is there an active storm alert for Manila, Philippines right now: Wind speed: sustained winds of 1.7 km/h. Gusts: wind gusts of 15.8 km/h. Precipitation: 0.8 mm. Overall risk: 0.1 on a scale of 0 to 1, graded none.',
+    },
+  });
+  check('risk read from prose, not a fallback constant', a.risk === 0.1, `risk=${a.risk}`);
+  check('grade read from prose', a.verdict === 'none', `verdict=${a.verdict}`);
+  check('calm prose alert is correctly not severe', a.severe === false);
+  check('prose carried out so binding can use it', typeof a.prose === 'string' && a.prose.includes('Manila'));
+  check('prose-derived alert is marked as such', a.derivedFrom === 'prose', `derivedFrom=${a.derivedFrom}`);
+  check('policy binds on the city named in the alert prose',
+    locationNamedInProse('Manila, Philippines', a.prose) === true);
+  check('a different city does NOT bind to that prose',
+    locationNamedInProse('Darwin, Australia', a.prose) === false);
+
+  const severe = extractAlertSignal({
+    result: { confidence: 1, verdict: 'high', reason: 'Overall risk: 0.82 on a scale of 0 to 1, graded high.' },
+  });
+  check('storm-force prose alert clears the gate', severe.severe === true, `risk=${severe.risk}`);
+
+  const bare = extractAlertSignal({ result: { reason: 'Temperatures around 0.9 degrees overnight.' } });
+  check('an unanchored decimal is not mistaken for risk', bare.risk === null, `risk=${bare.risk}`);
+}
+
+
 console.log(`\n${'='.repeat(62)}`);
 console.log(`RESULT: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
