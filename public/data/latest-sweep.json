@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-09-17T18:38:56.364Z",
+  "sweptAt": "2026-09-17T21:50:15.083Z",
   "citiesAssessed": 5,
   "unavailable": 0,
   "signalsFetched": 36,
@@ -12,7 +12,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.30 below threshold 0.6 (verdict: low)",
+      "reason": "alert reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -20,7 +20,7 @@
       "location": "Hong Kong",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 18.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.36 below threshold 0.6 (verdict: low)",
+      "reason": "alert reported no location and its text does not name \"Hong Kong\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -28,7 +28,7 @@
       "location": "Miami, Florida",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 50%, precip 1.4mm, wind 21.6km/h; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)",
+      "reason": "alert reported no location and its text does not name \"Miami, Florida\" -- holding (entity-binding check); forecast not severe (precip 31%, wind 15.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -36,7 +36,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 26.9km/h; thresholds 70%/20mm/50km/h); alert risk 0.47 below threshold 0.6 (verdict: moderate)",
+      "reason": "alert reported no location and its text does not name \"Darwin, Australia\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 27.0km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -44,7 +44,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no usable risk evidence (verdict: none) -- holding",
+      "reason": "alert reported no location and its text does not name \"Lagos Nigeria\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -52,7 +52,7 @@
       "location": "Lagos Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.53 below threshold 0.6 (verdict: moderate)",
+      "reason": "alert reported no location and its text does not name \"Lagos Nigeria\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     }
   ],
@@ -61,73 +61,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 28%, wind 7.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Tokyo, Japan\" -- holding (entity-binding check); forecast not severe (precip 53%, precip 0.3mm, wind 7.3km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 12%, precip 1.1mm, wind 8.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.24 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Osaka, Japan\" -- holding (entity-binding check); forecast not severe (precip 12%, precip 1.1mm, wind 8.3km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 31%, wind 12.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.27 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 31%, wind 16.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.44 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Bangkok, Thailand\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.23 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Singapore\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Chennai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.45 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Chennai, India\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 31%, precip 1.4mm, wind 14.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.26 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (precip 16%, wind 10.9km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.51 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Havana, Cuba\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.53 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Lagos, Nigeria\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 13.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.32 below threshold 0.6 (verdict: low)"
+      "reason": "alert reported no location and its text does not name \"Sydney, Australia\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 16.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.48 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Auckland, New Zealand\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 23.5km/h; thresholds 70%/20mm/50km/h); alert risk 0.42 below threshold 0.6 (verdict: moderate)"
+      "reason": "alert reported no location and its text does not name \"Lisbon, Portugal\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 16.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     }
   ]
 }
