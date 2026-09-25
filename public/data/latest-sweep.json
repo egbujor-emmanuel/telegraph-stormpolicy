@@ -1,8 +1,8 @@
 {
-  "sweptAt": "2026-09-25T17:48:55.280Z",
+  "sweptAt": "2026-09-25T21:11:34.371Z",
   "citiesAssessed": 4,
-  "unavailable": 0,
-  "signalsFetched": 34,
+  "unavailable": 1,
+  "signalsFetched": 32,
   "triggered": 0,
   "sweepError": null,
   "finalized": [],
@@ -35,8 +35,8 @@
       "policyId": "30",
       "location": "Lagos Nigeria",
       "triggered": false,
-      "unavailable": false,
-      "reason": "router misclassified alert query as WEATHER_CHECK, not STORM_ALERT -- holding",
+      "unavailable": true,
+      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
       "txHash": null
     },
     {
