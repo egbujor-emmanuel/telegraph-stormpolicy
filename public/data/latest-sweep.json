@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-10-15T07:02:10.376Z",
+  "sweptAt": "2026-10-15T12:39:22.840Z",
   "citiesAssessed": 2,
   "unavailable": 0,
   "signalsFetched": 28,
@@ -7,8 +7,8 @@
   "sweepError": null,
   "finalized": [
     {
-      "policyId": "30",
-      "txHash": "0x0081e7ce1caa1962c0ad4d090fae3d65bd383baa1e2d610af1ad008b35762bd8"
+      "policyId": "33",
+      "txHash": "0x36280752e1c4392bd3b363f46f14027adf19298b48e4be005b4fb1aaba4cc98f"
     }
   ],
   "decisions": [
@@ -17,7 +17,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); forecast not severe (precip 0%, wind 10.5km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)",
       "txHash": null
     },
     {
@@ -25,7 +25,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.37 below threshold 0.6",
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)",
       "txHash": null
     }
   ],
@@ -34,73 +34,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 6%, wind 10.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.32 below threshold 0.6"
+      "reason": "forecast not severe (precip 8%; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 5.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.24 below threshold 0.6"
+      "reason": "forecast not severe (precip 0%; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 10.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.26 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.31 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.48 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.40 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Chennai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Chennai, India\" -- holding (entity-binding check); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (precip 5%, wind 16.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "forecast not severe (precip 5%; thresholds 70%/20mm/50km/h); alert risk 0.51 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.21 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.18 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.40 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.35 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert risk 0.40 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.34 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 0%, wind 8.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.25 below threshold 0.6"
+      "reason": "forecast confidence 0.00 below floor 0.5 -- miner itself isn't sure, holding regardless of severity; forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
     }
   ]
 }
