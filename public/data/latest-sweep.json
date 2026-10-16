@@ -1,8 +1,8 @@
 {
-  "sweptAt": "2026-10-16T06:12:18.367Z",
+  "sweptAt": "2026-10-16T11:26:12.054Z",
   "citiesAssessed": 2,
-  "unavailable": 1,
-  "signalsFetched": 22,
+  "unavailable": 0,
+  "signalsFetched": 28,
   "triggered": 0,
   "sweepError": null,
   "finalized": [],
@@ -11,8 +11,8 @@
       "policyId": "13",
       "location": "Mumbai, India",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding",
       "txHash": null
     },
     {
@@ -20,7 +20,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Darwin, Australia\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)",
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding",
       "txHash": null
     }
   ],
@@ -29,73 +29,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Tokyo, Japan\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Osaka, Japan\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — will be re-checked next sweep."
+      "unavailable": false,
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Singapore\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Chennai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Chennai, India\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); alert reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Havana, Cuba\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.46 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Lagos, Nigeria\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.33 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Sydney, Australia\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.30 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast reported no location and its text does not name \"Auckland, New Zealand\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert risk 0.32 below threshold 0.6 (verdict: low)"
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — will be re-checked next sweep."
+      "unavailable": false,
+      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
     }
   ]
 }
