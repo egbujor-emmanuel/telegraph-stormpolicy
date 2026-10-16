@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-10-16T11:26:12.054Z",
+  "sweptAt": "2026-10-16T15:29:05.741Z",
   "citiesAssessed": 2,
   "unavailable": 0,
   "signalsFetched": 28,
@@ -83,7 +83,7 @@
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "router misclassified forecast query as CHAT_COMPLETION, not WEATHER_FORECAST -- holding"
+      "reason": "router misclassified forecast query as WEB_SEARCH, not WEATHER_FORECAST -- holding"
     },
     {
       "location": "Auckland, New Zealand",
