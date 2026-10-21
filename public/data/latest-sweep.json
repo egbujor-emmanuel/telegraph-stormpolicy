@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-10-20T21:32:12.013Z",
+  "sweptAt": "2026-10-21T00:08:12.511Z",
   "citiesAssessed": 2,
   "unavailable": 0,
   "signalsFetched": 28,
@@ -12,7 +12,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 16.2km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
+      "reason": "alert reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 16.9km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -20,7 +20,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Darwin, Australia\" -- holding (entity-binding check); forecast not severe (precip 4%, precip 0.1mm, wind 13.0km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
+      "reason": "alert reported no location and its text does not name \"Darwin, Australia\" -- holding (entity-binding check); forecast not severe (precip 4%, precip 0.1mm, wind 19.8km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     }
   ],
@@ -29,31 +29,31 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Tokyo, Japan\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 7.2km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Tokyo, Japan\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 37.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Osaka, Japan\" -- holding (entity-binding check); forecast not severe (precip 43%, precip 0.0mm, wind 29.9km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Osaka, Japan\" -- holding (entity-binding check); forecast not severe (precip 51%, precip 0.0mm, wind 39.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 16.2km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 57%, precip 0.0mm, wind 30.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Bangkok, Thailand\" -- holding (entity-binding check); forecast not severe (precip 12%, precip 0.4mm, wind 14.4km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Bangkok, Thailand\" -- holding (entity-binding check); forecast not severe (precip 22%, precip 0.0mm, wind 7.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Singapore\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 13.0km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Singapore\" -- holding (entity-binding check); forecast not severe (precip 8%, precip 0.0mm, wind 14.8km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Chennai, India",
@@ -65,37 +65,37 @@
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 13.0km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 13.7km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Havana, Cuba\" -- holding (entity-binding check); forecast not severe (precip 29%, precip 0.0mm, wind 46.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Havana, Cuba\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 31.7km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Lagos, Nigeria\" -- holding (entity-binding check); forecast not severe (precip 10%, precip 0.0mm, wind 17.3km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Lagos, Nigeria\" -- holding (entity-binding check); forecast not severe (precip 4%, precip 0.0mm, wind 16.6km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Sydney, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Sydney, Australia\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 10.8km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Sydney, Australia\" -- holding (entity-binding check); forecast not severe (precip 37%, precip 0.0mm, wind 32.0km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Auckland, New Zealand\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 38.5km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Auckland, New Zealand\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 42.1km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Lisbon, Portugal\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 13.7km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "reason": "alert reported no location and its text does not name \"Lisbon, Portugal\" -- holding (entity-binding check); forecast not severe (precip 0%, precip 0.0mm, wind 11.5km/h; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
     }
   ]
 }
