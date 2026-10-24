@@ -1,5 +1,5 @@
 {
-  "sweptAt": "2026-10-24T14:49:24.480Z",
+  "sweptAt": "2026-10-24T17:53:01.158Z",
   "citiesAssessed": 2,
   "unavailable": 0,
   "signalsFetched": 28,
@@ -12,7 +12,7 @@
       "location": "Mumbai, India",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Mumbai, India\" -- holding (entity-binding check); forecast not severe (wind 20.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)",
+      "reason": "forecast not severe (precip 3.2mm, wind 17.9km/h; thresholds 70%/20mm/50km/h); alert risk 0.41 below threshold 0.6 (verdict: low)",
       "txHash": null
     },
     {
@@ -20,7 +20,7 @@
       "location": "Darwin, Australia",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Darwin, Australia\" -- holding (entity-binding check); forecast not severe (precip 2.2mm, wind 15.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)",
+      "reason": "forecast not severe (precip 1.2mm, wind 15.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.37 below threshold 0.6 (verdict: low)",
       "txHash": null
     }
   ],
@@ -29,73 +29,73 @@
       "location": "Tokyo, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 2.3mm, wind 31.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.33 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"中野区\" does not bind to policy location \"Tokyo, Japan\" -- holding (entity-binding check)"
     },
     {
       "location": "Osaka, Japan",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 6.5mm, wind 32.0km/h; thresholds 70%/20mm/50km/h); alert risk 0.50 below threshold 0.6 (verdict: moderate)"
+      "reason": "forecast location \"大阪市\" does not bind to policy location \"Osaka, Japan\" -- holding (entity-binding check)"
     },
     {
       "location": "Shanghai, China",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 8.5mm, wind 29.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"浦东新区\" does not bind to policy location \"Shanghai, China\" -- holding (entity-binding check); forecast not severe (precip 15.4mm, wind 24.0km/h; thresholds 70%/20mm/50km/h)"
     },
     {
       "location": "Bangkok, Thailand",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Bangkok, Thailand\" -- holding (entity-binding check); forecast not severe (precip 5.3mm, wind 14.8km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"กรุงเทพมหานคร\" does not bind to policy location \"Bangkok, Thailand\" -- holding (entity-binding check); forecast not severe (precip 6.9mm, wind 14.7km/h; thresholds 70%/20mm/50km/h)"
     },
     {
       "location": "Singapore",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Singapore\" -- holding (entity-binding check); forecast not severe (precip 0.4mm, wind 16.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "alert risk 0.34 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Chennai, India",
-      "triggered": false,
+      "triggered": true,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Chennai, India\" -- holding (entity-binding check); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "corroborated: forecast confidence 0.99 (precip 28.0mm, wind 17.5km/h, flags storm) + alert risk 0.90 (high) both cross threshold for Chennai, India"
     },
     {
       "location": "Houston, Texas",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Houston, Texas\" -- holding (entity-binding check); forecast not severe (wind 14.0km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "forecast not severe (precip 0.0mm, wind 15.3km/h; thresholds 70%/20mm/50km/h); alert risk 0.32 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Havana, Cuba",
       "triggered": false,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Havana, Cuba\" -- holding (entity-binding check); forecast not severe (precip 2.5mm, wind 33.8km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"La Habana\" does not bind to policy location \"Havana, Cuba\" -- holding (entity-binding check); forecast not severe (precip 7.4mm, wind 23.6km/h; thresholds 70%/20mm/50km/h)"
     },
     {
       "location": "Lagos, Nigeria",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (precip 6.2mm, wind 18.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "forecast not severe (precip 7.6mm, wind 13.2km/h; thresholds 70%/20mm/50km/h); alert risk 0.38 below threshold 0.6 (verdict: low)"
     },
     {
       "location": "Sydney, Australia",
-      "triggered": false,
+      "triggered": true,
       "unavailable": false,
-      "reason": "alert location \"Lagos, Nigeria\" does not bind to policy location \"Sydney, Australia\" -- holding (entity-binding check); forecast not severe (precip 9.5mm, wind 46.4km/h; thresholds 70%/20mm/50km/h); alert risk 0.22 below threshold 0.6 (verdict: low)"
+      "reason": "corroborated: forecast confidence 0.99 (precip 13.8mm, wind 27.3km/h, flags storm) + alert risk 0.90 (high) both cross threshold for Sydney, Australia"
     },
     {
       "location": "Auckland, New Zealand",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (wind 20.5km/h; thresholds 70%/20mm/50km/h); alert risk 0.36 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"Ōrākei\" does not bind to policy location \"Auckland, New Zealand\" -- holding (entity-binding check); forecast not severe (precip 0.3mm, wind 15.4km/h; thresholds 70%/20mm/50km/h)"
     },
     {
       "location": "Lisbon, Portugal",
       "triggered": false,
       "unavailable": false,
-      "reason": "forecast not severe (wind 19.1km/h; thresholds 70%/20mm/50km/h); alert risk 0.23 below threshold 0.6 (verdict: low)"
+      "reason": "forecast location \"Lisboa\" does not bind to policy location \"Lisbon, Portugal\" -- holding (entity-binding check); forecast not severe (precip 0.0mm, wind 14.5km/h; thresholds 70%/20mm/50km/h); alert risk 0.40 below threshold 0.6 (verdict: low)"
     }
   ]
 }
