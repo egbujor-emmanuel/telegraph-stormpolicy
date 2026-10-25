@@ -1,7 +1,7 @@
 {
-  "sweptAt": "2026-10-25T14:37:59.153Z",
+  "sweptAt": "2026-10-25T18:11:43.625Z",
   "citiesAssessed": 2,
-  "unavailable": 2,
+  "unavailable": 1,
   "signalsFetched": 2,
   "triggered": 0,
   "sweepError": null,
@@ -11,8 +11,8 @@
       "policyId": "13",
       "location": "Mumbai, India",
       "triggered": false,
-      "unavailable": true,
-      "reason": "Signals unavailable this run — the request was retried and will be re-checked next sweep.",
+      "unavailable": false,
+      "reason": "forecast reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); alert reported no location and its text does not name \"Mumbai, India\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding",
       "txHash": null
     },
     {
@@ -58,8 +58,8 @@
     {
       "location": "Chennai, India",
       "triggered": false,
-      "unavailable": false,
-      "reason": "alert reported no location and its text does not name \"Chennai, India\" -- holding (entity-binding check); forecast not severe (no severity fields reported; thresholds 70%/20mm/50km/h); alert reported no usable risk evidence (verdict: none) -- holding"
+      "unavailable": true,
+      "reason": "Signals unavailable this run — will be re-checked next sweep."
     },
     {
       "location": "Houston, Texas",
